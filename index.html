@@ -2,7 +2,6 @@
 <html lang="tr">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -13,7 +12,6 @@
     <title>Realm of Shadows</title>
 
     <link rel="stylesheet" href="style.css">
-
 </head>
 
 
@@ -21,9 +19,9 @@
 
 <div id="game">
 
-    <!-- =========================
+    <!-- =========================================
          ÜST MENÜ
-    ========================== -->
+    ========================================== -->
 
     <header class="topbar">
 
@@ -33,20 +31,32 @@
 
         <div class="top-buttons">
 
-            <button id="characterButton">
-                Karakter
+            <button
+                id="characterButton"
+                type="button"
+            >
+                🧙 Karakter
             </button>
 
-            <button id="inventoryButton">
-                Envanter
+            <button
+                id="inventoryButton"
+                type="button"
+            >
+                🎒 Envanter
             </button>
 
-            <button id="saveButton">
-                Kaydet
+            <button
+                id="saveButton"
+                type="button"
+            >
+                💾 Kaydet
             </button>
 
-            <button id="loadButton">
-                Yükle
+            <button
+                id="loadButton"
+                type="button"
+            >
+                📂 Yükle
             </button>
 
         </div>
@@ -54,16 +64,16 @@
     </header>
 
 
-    <!-- =========================
-         ANA OYUN
-    ========================== -->
+    <!-- =========================================
+         ANA OYUN ALANI
+    ========================================== -->
 
     <main class="game-layout">
 
 
-        <!-- =====================
+        <!-- =====================================
              SOL PANEL
-        ====================== -->
+        ====================================== -->
 
         <aside class="left-panel">
 
@@ -78,17 +88,20 @@
                 </h2>
 
                 <p id="characterClass">
-                    Savaşçı
+                    İnsan Savaşçı
                 </p>
 
             </section>
 
+
+            <!-- TEMEL BİLGİLER -->
 
             <section class="stats-card">
 
                 <h3>
                     Karakter
                 </h3>
+
 
                 <div class="stat">
 
@@ -144,6 +157,8 @@
             </section>
 
 
+            <!-- ÖZELLİKLER -->
+
             <section class="stats-card">
 
                 <h3>
@@ -154,7 +169,7 @@
                 <div class="ability">
 
                     <span>
-                        Güç
+                        ⚔️ Güç
                     </span>
 
                     <strong id="strength">
@@ -167,7 +182,7 @@
                 <div class="ability">
 
                     <span>
-                        Çeviklik
+                        🏹 Çeviklik
                     </span>
 
                     <strong id="dexterity">
@@ -180,7 +195,7 @@
                 <div class="ability">
 
                     <span>
-                        Dayanıklılık
+                        🛡️ Dayanıklılık
                     </span>
 
                     <strong id="constitution">
@@ -193,7 +208,7 @@
                 <div class="ability">
 
                     <span>
-                        Zeka
+                        🧠 Zeka
                     </span>
 
                     <strong id="intelligence">
@@ -206,7 +221,7 @@
                 <div class="ability">
 
                     <span>
-                        Bilgelik
+                        👁️ Bilgelik
                     </span>
 
                     <strong id="wisdom">
@@ -219,7 +234,7 @@
                 <div class="ability">
 
                     <span>
-                        Karizma
+                        🗣️ Karizma
                     </span>
 
                     <strong id="charisma">
@@ -233,17 +248,19 @@
         </aside>
 
 
-        <!-- =====================
-             HİKAYE
-        ====================== -->
+        <!-- =====================================
+             HİKAYE PANELİ
+        ====================================== -->
 
         <section class="story-panel">
 
+            <!-- KONUM -->
+
             <div class="location">
 
-                <span>
+                <div class="location-label">
                     📍 Konum
-                </span>
+                </div>
 
                 <strong id="location">
                     Blackmoor Köyü
@@ -252,25 +269,26 @@
             </div>
 
 
+            <!-- HİKAYE -->
+
             <div
                 id="story"
                 class="story"
             >
 
-                <!-- JavaScript buraya hikaye ekleyecek -->
+                <!-- JavaScript buraya mesajları ekleyecek -->
 
             </div>
 
 
-            <!-- =================
-                 OYUNCU EYLEMİ
-            ================== -->
+            <!-- OYUNCU EYLEM ALANI -->
 
             <div class="action-area">
 
                 <textarea
                     id="playerInput"
-                    placeholder="Karakterinin ne yaptığını kendi cümlelerinle yaz..."
+                    rows="3"
+                    placeholder="Karakterinin ne yaptığını yaz..."
                 ></textarea>
 
 
@@ -279,7 +297,7 @@
                     class="action-button"
                     type="button"
                 >
-                    Eylemi Gerçekleştir
+                    ⚔️ Eylemi Gerçekleştir
                 </button>
 
             </div>
@@ -287,20 +305,37 @@
         </section>
 
 
-        <!-- =====================
+        <!-- =====================================
              SAĞ PANEL
-        ====================== -->
+        ====================================== -->
 
         <aside class="right-panel">
 
 
+            <!-- ENVANTER -->
+
             <section class="side-card">
 
-                <h3>
-                    🎒 Envanter
-                </h3>
+                <div class="side-card-header">
 
-                <div id="inventory">
+                    <h3>
+                        🎒 Envanter
+                    </h3>
+
+                    <span
+                        id="inventoryCount"
+                        class="item-count"
+                    >
+                        0
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="inventory"
+                    class="inventory-list"
+                >
 
                     <p class="empty">
                         Envanter yükleniyor...
@@ -311,13 +346,30 @@
             </section>
 
 
+            <!-- GÖREVLER -->
+
             <section class="side-card">
 
-                <h3>
-                    📜 Görevler
-                </h3>
+                <div class="side-card-header">
 
-                <div id="quests">
+                    <h3>
+                        📜 Görevler
+                    </h3>
+
+                    <span
+                        id="questCount"
+                        class="item-count"
+                    >
+                        0
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="quests"
+                    class="quest-list"
+                >
 
                     <p class="empty">
                         Görevler yükleniyor...
@@ -328,11 +380,14 @@
             </section>
 
 
+            <!-- ZAR -->
+
             <section class="side-card dice-card">
 
                 <h3>
                     🎲 Zar
                 </h3>
+
 
                 <div
                     id="diceResult"
@@ -359,9 +414,9 @@
 </div>
 
 
-<!-- =========================
+<!-- =========================================
      KARAKTER MODALI
-========================== -->
+========================================== -->
 
 <div
     id="characterModal"
@@ -371,26 +426,46 @@
     <div class="modal-content">
 
         <button
-            class="close"
             id="closeCharacter"
+            class="close"
             type="button"
+            aria-label="Kapat"
         >
             ×
         </button>
 
 
         <h2>
-            🧙 Karakterini Oluştur
+            🧙 Karakter
         </h2>
 
 
+        <!-- KARAKTER BİLGİSİ -->
+
+        <div
+            id="characterInfo"
+            class="character-info"
+        ></div>
+
+
+        <hr>
+
+
+        <!-- KARAKTER OLUŞTURMA -->
+
+        <h3>
+            Yeni Karakter
+        </h3>
+
+
         <label for="nameInput">
-            Karakter adı
+            Karakter Adı
         </label>
 
         <input
             id="nameInput"
             type="text"
+            maxlength="30"
             placeholder="Örn. Arden"
         >
 
@@ -487,7 +562,7 @@
             class="action-button"
             type="button"
         >
-            Karakteri Oluştur
+            ⚔️ Karakteri Oluştur
         </button>
 
     </div>
