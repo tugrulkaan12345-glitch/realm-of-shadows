@@ -1,11 +1,11 @@
 /* =========================================================
    REALM OF SHADOWS
-   TEK PARÇA OYUN MOTORU
+   TEMİZ OYUN MOTORU
 ========================================================= */
 
 
 /* =========================================================
-   1. OYUN VERİSİ
+   OYUN VERİSİ
 ========================================================= */
 
 const game = {
@@ -142,127 +142,72 @@ const game = {
 
 
 /* =========================================================
-   2. SAYFA ELEMANLARI
+   DOM ELEMANLARI
 ========================================================= */
 
-const elements = {
+const playerInput =
+    document.getElementById("playerInput");
 
-    playerInput:
-        document.getElementById("playerInput"),
+const actionButton =
+    document.getElementById("actionButton");
 
-    actionButton:
-        document.getElementById("actionButton"),
+const saveButton =
+    document.getElementById("saveButton");
 
-    saveButton:
-        document.getElementById("saveButton"),
+const loadButton =
+    document.getElementById("loadButton");
 
-    loadButton:
-        document.getElementById("loadButton"),
+const characterButton =
+    document.getElementById("characterButton");
 
-    characterButton:
-        document.getElementById("characterButton"),
+const characterModal =
+    document.getElementById("characterModal");
 
-    inventoryButton:
-        document.getElementById("inventoryButton"),
+const closeCharacter =
+    document.getElementById("closeCharacter");
 
-    characterModal:
-        document.getElementById("characterModal"),
+const characterInfo =
+    document.getElementById("characterInfo");
 
-    closeCharacter:
-        document.getElementById("closeCharacter"),
+const inventoryButton =
+    document.getElementById("inventoryButton");
 
-    characterInfo:
-        document.getElementById("characterInfo"),
+const inventoryModal =
+    document.getElementById("inventoryModal");
 
-    inventory:
-        document.getElementById("inventory"),
+const closeInventory =
+    document.getElementById("closeInventory");
 
-    inventoryCount:
-        document.getElementById("inventoryCount"),
+const inventoryPanel =
+    document.getElementById("inventory");
 
-    quests:
-        document.getElementById("quests"),
+const inventoryCount =
+    document.getElementById("inventoryCount");
 
-    questCount:
-        document.getElementById("questCount"),
+const questsPanel =
+    document.getElementById("quests");
 
-    diceResult:
-        document.getElementById("diceResult"),
+const questCount =
+    document.getElementById("questCount");
 
-    rollButton:
-        document.getElementById("rollButton"),
+const rollButton =
+    document.getElementById("rollButton");
 
-    story:
-        document.getElementById("story"),
-
-    location:
-        document.getElementById("location"),
-
-    characterName:
-        document.getElementById("characterName"),
-
-    characterClass:
-        document.getElementById("characterClass"),
-
-    hp:
-        document.getElementById("hp"),
-
-    level:
-        document.getElementById("level"),
-
-    xp:
-        document.getElementById("xp"),
-
-    gold:
-        document.getElementById("gold"),
-
-    strength:
-        document.getElementById("strength"),
-
-    dexterity:
-        document.getElementById("dexterity"),
-
-    constitution:
-        document.getElementById("constitution"),
-
-    intelligence:
-        document.getElementById("intelligence"),
-
-    wisdom:
-        document.getElementById("wisdom"),
-
-    charisma:
-        document.getElementById("charisma"),
-
-    nameInput:
-        document.getElementById("nameInput"),
-
-    raceInput:
-        document.getElementById("raceInput"),
-
-    classInput:
-        document.getElementById("classInput"),
-
-    backgroundInput:
-        document.getElementById("backgroundInput"),
-
-    createCharacter:
-        document.getElementById("createCharacter")
-
-};
+const diceResult =
+    document.getElementById("diceResult");
 
 
 /* =========================================================
-   3. HTML GÜVENLİĞİ
+   GÜVENLİ HTML
 ========================================================= */
 
-function escapeHTML(text) {
+function escapeHTML(value) {
 
     const div =
         document.createElement("div");
 
     div.textContent =
-        String(text);
+        value ?? "";
 
     return div.innerHTML;
 
@@ -270,18 +215,18 @@ function escapeHTML(text) {
 
 
 /* =========================================================
-   4. HİKAYE MESAJI
+   HİKAYE MESAJI
 ========================================================= */
 
-function addStoryMessage(
-    text,
-    type = "dm"
-) {
+function addStoryMessage(text, type = "dm") {
 
-    if (!elements.story) {
+    const story =
+        document.getElementById("story");
+
+    if (!story) {
 
         console.error(
-            "❌ #story bulunamadı."
+            "❌ Story alanı bulunamadı."
         );
 
         return;
@@ -292,15 +237,18 @@ function addStoryMessage(
     const message =
         document.createElement("div");
 
-    message.className =
-        `story-message ${type}`;
+    message.classList.add(
+        "story-message",
+        type
+    );
 
 
     const author =
         document.createElement("div");
 
-    author.className =
-        "message-author";
+    author.classList.add(
+        "message-author"
+    );
 
 
     if (type === "player") {
@@ -308,9 +256,7 @@ function addStoryMessage(
         author.textContent =
             game.player.name;
 
-    }
-
-    else {
+    } else {
 
         author.textContent =
             "🎲 Dungeon Master";
@@ -329,132 +275,1316 @@ function addStoryMessage(
 
     message.appendChild(content);
 
-    elements.story.appendChild(message);
+    story.appendChild(message);
 
 
-    elements.story.scrollTop =
-        elements.story.scrollHeight;
-
-}
-
-
-/* =========================================================
-   5. KARAKTER ARAYÜZÜ
-========================================================= */
-
-function updateCharacterUI() {
-
-    if (elements.characterName) {
-
-        elements.characterName.textContent =
-            game.player.name;
-
-    }
-
-
-    if (elements.characterClass) {
-
-        elements.characterClass.textContent =
-            `${game.player.race} ${game.player.className}`;
-
-    }
-
-
-    if (elements.hp) {
-
-        elements.hp.textContent =
-            `${game.player.hp} / ${game.player.maxHp}`;
-
-    }
-
-
-    if (elements.level) {
-
-        elements.level.textContent =
-            game.player.level;
-
-    }
-
-
-    if (elements.xp) {
-
-        elements.xp.textContent =
-            game.player.xp;
-
-    }
-
-
-    if (elements.gold) {
-
-        elements.gold.textContent =
-            game.player.gold;
-
-    }
-
-
-    updateStat(
-        elements.strength,
-        game.player.stats.strength
-    );
-
-    updateStat(
-        elements.dexterity,
-        game.player.stats.dexterity
-    );
-
-    updateStat(
-        elements.constitution,
-        game.player.stats.constitution
-    );
-
-    updateStat(
-        elements.intelligence,
-        game.player.stats.intelligence
-    );
-
-    updateStat(
-        elements.wisdom,
-        game.player.stats.wisdom
-    );
-
-    updateStat(
-        elements.charisma,
-        game.player.stats.charisma
-    );
+    story.scrollTop =
+        story.scrollHeight;
 
 }
 
 
 /* =========================================================
-   6. STAT GÜNCELLE
+   OYUNCU EYLEMİ
 ========================================================= */
 
-function updateStat(
-    element,
-    value
+function playerAction() {
+
+    if (!playerInput) {
+
+        return;
+
+    }
+
+
+    const text =
+        playerInput.value.trim();
+
+
+    if (!text) {
+
+        return;
+
+    }
+
+
+    addStoryMessage(
+        escapeHTML(text),
+        "player"
+    );
+
+
+    game.story.actions.push({
+
+        text: text,
+
+        location:
+            game.world.location,
+
+        time:
+            game.world.time,
+
+        timestamp:
+            new Date().toISOString()
+
+    });
+
+
+    playerInput.value = "";
+
+
+    dungeonMaster(text);
+
+}
+
+
+/* =========================================================
+   DUNGEON MASTER
+========================================================= */
+
+function dungeonMaster(action) {
+
+    const lower =
+        action.toLocaleLowerCase("tr-TR");
+
+
+    let response;
+
+
+    /* KUYU */
+
+    if (
+        lower.includes("kuyu") ||
+        lower.includes("aşağı") ||
+        lower.includes("dinliyorum")
+    ) {
+
+        game.story.flags.well = true;
+
+
+        response = `
+
+            Kuyunun taş kenarına yaklaşıyorsun.
+
+            <br><br>
+
+            Yağmur taşların üzerinde küçük nehirler
+            oluştururken aşağıdan belli belirsiz bir ses
+            yükseliyor.
+
+            <br><br>
+
+            Önce bunun rüzgâr olduğunu düşünüyorsun.
+
+            Fakat birkaç saniye sonra aynı fısıltıyı
+            tekrar duyuyorsun.
+
+            <br><br>
+
+            <i>"Beni bul..."</i>
+
+        `;
+
+        updateQuestProgress(
+            "blackmoor_whispers",
+            "visit_well"
+        );
+
+    }
+
+
+    /* KİLİSE */
+
+    else if (
+        lower.includes("kilise") ||
+        lower.includes("kiliseye")
+    ) {
+
+        game.story.flags.church = true;
+
+
+        response = `
+
+            Terk edilmiş kilisenin bulunduğu sokağa
+            giriyorsun.
+
+            <br><br>
+
+            Kapının önündeki taş basamaklar yağmurdan
+            dolayı kaygan.
+
+            <br><br>
+
+            Kapı tamamen kapalı değil.
+
+            Aralıktan içeride çok zayıf bir mum ışığı
+            süzülüyor.
+
+            <br><br>
+
+            İçeride biri varmış gibi hissediyorsun.
+
+        `;
+
+    }
+
+
+    /* ORMAN */
+
+    else if (
+        lower.includes("orman") ||
+        lower.includes("ağaç")
+    ) {
+
+        changeLocation(
+            "Blackmoor Ormanı"
+        );
+
+
+        response = `
+
+            Köyün ışıkları arkanda kalıyor.
+
+            <br><br>
+
+            Ormana girdikçe yağmurun sesi azalıyor.
+
+            <br><br>
+
+            Ağaçların arasında görüş mesafesi giderek
+            düşüyor.
+
+            <br><br>
+
+            Bir süre sonra arkandan gelen ayak seslerini
+            fark ediyorsun.
+
+        `;
+
+    }
+
+
+    /* MARA / ŞİFACI */
+
+    else if (
+        lower.includes("mara") ||
+        lower.includes("şifacı")
+    ) {
+
+        const mara =
+            game.npcs.find(
+                npc => npc.id === "healer_mara"
+            );
+
+
+        if (mara) {
+
+            mara.trust += 1;
+
+            mara.relationshipHistory.push({
+
+                action: action,
+
+                timestamp:
+                    new Date().toISOString()
+
+            });
+
+        }
+
+
+        updateQuestProgress(
+            "missing_person",
+            "talk_healer"
+        );
+
+
+        response = `
+
+            Şifacı Mara sana dikkatlice bakıyor.
+
+            <br><br>
+
+            <i>
+            "Kardeşim birkaç gün önce kayboldu.
+            Son kez kilisenin yakınında görülmüştü."
+            </i>
+
+            <br><br>
+
+            Yüzündeki endişeyi saklamaya çalışsa da
+            başarılı olamıyor.
+
+        `;
+
+    }
+
+
+    /* KÖYLÜ */
+
+    else if (
+        lower.includes("köylü") ||
+        lower.includes("adam") ||
+        lower.includes("kadın")
+    ) {
+
+        response = `
+
+            Yakındaki köylülerden biri sana dikkatlice
+            bakıyor.
+
+            <br><br>
+
+            Birkaç saniye boyunca hiçbir şey söylemiyor.
+
+            <br><br>
+
+            Sonra yaklaşarak sesini alçaltıyor.
+
+            <br><br>
+
+            <i>"Bu gece burada fazla dolaşma."</i>
+
+        `;
+
+    }
+
+
+    /* GENEL */
+
+    else {
+
+        response =
+            randomGenericResponse();
+
+    }
+
+
+    addStoryMessage(
+        response,
+        "dm"
+    );
+
+
+    game.story.events.push({
+
+        action: action,
+
+        response: response,
+
+        location:
+            game.world.location,
+
+        timestamp:
+            new Date().toISOString()
+
+    });
+
+
+    updateWorldUI();
+
+    updateQuestUI();
+
+}
+
+
+/* =========================================================
+   GENEL CEVAPLAR
+========================================================= */
+
+function randomGenericResponse() {
+
+    const responses = [
+
+        `
+        Etrafındaki dünya sessiz görünse de
+        tamamen hareketsiz değil.
+
+        <br><br>
+
+        Uzaklardan bir ses geliyor.
+        `,
+
+
+        `
+        Hamlen beklediğinden farklı bir etki yaratıyor.
+
+        <br><br>
+
+        Çevredeki insanların davranışlarında küçük
+        bir değişiklik fark ediyorsun.
+        `,
+
+
+        `
+        Birkaç saniye boyunca hiçbir şey olmuyor.
+
+        <br><br>
+
+        Sonra uzaktan metalik bir ses duyuluyor.
+        `,
+
+
+        `
+        İçgüdülerin sana burada gözden kaçırdığın
+        bir şey olduğunu söylüyor.
+        `,
+
+
+        `
+        Hareketin çevrenin sessizliğini bozuyor.
+
+        <br><br>
+
+        Karanlığın içinden bir gölge geçiyor.
+        `
+
+    ];
+
+
+    const index =
+        Math.floor(
+            Math.random() *
+            responses.length
+        );
+
+
+    return responses[index];
+
+}
+
+
+/* =========================================================
+   KONUM DEĞİŞTİR
+========================================================= */
+
+function changeLocation(location) {
+
+    const oldLocation =
+        game.world.location;
+
+
+    if (oldLocation === location) {
+
+        return;
+
+    }
+
+
+    game.world.location =
+        location;
+
+
+    game.story.events.push({
+
+        type: "location_change",
+
+        from: oldLocation,
+
+        to: location,
+
+        timestamp:
+            new Date().toISOString()
+
+    });
+
+
+    updateWorldUI();
+
+}
+
+
+/* =========================================================
+   DÜNYA ARAYÜZİ
+========================================================= */
+
+function updateWorldUI() {
+
+    const locationElement =
+        document.getElementById("location");
+
+
+    if (locationElement) {
+
+        locationElement.textContent =
+            game.world.location;
+
+    }
+
+}
+
+
+/* =========================================================
+   NPC SİSTEMİ
+========================================================= */
+
+function createNPC(data) {
+
+    const existing =
+        game.npcs.find(
+            npc => npc.id === data.id
+        );
+
+
+    if (existing) {
+
+        return existing;
+
+    }
+
+
+    const npc = {
+
+        id: data.id,
+
+        name: data.name,
+
+        role: data.role,
+
+        personality: data.personality,
+
+        location: data.location,
+
+        trust: data.trust || 0,
+
+        secrets: data.secrets || [],
+
+        knowledge: data.knowledge || [],
+
+        relationshipHistory: []
+
+    };
+
+
+    game.npcs.push(npc);
+
+
+    return npc;
+
+}
+
+
+/* =========================================================
+   NPC'LERİ BAŞLAT
+========================================================= */
+
+function initializeNPCs() {
+
+    createNPC({
+
+        id: "elder_jonas",
+
+        name: "Jonas",
+
+        role: "Yaşlı Köylü",
+
+        personality:
+            "Şüpheci, korkak fakat köyünü korumaya çalışan biri.",
+
+        location:
+            "Blackmoor Köyü",
+
+        trust: 0,
+
+        secrets: [
+            "Kuyudan gelen seslerin yeni olmadığını biliyor.",
+            "Yıllar önce kuyuda bir çocuğun kaybolduğunu saklıyor."
+        ],
+
+        knowledge: [
+            "Köy kuyusundan geceleri fısıltılar geliyor.",
+            "Terk edilmiş kilisede bazen ışık görülüyor."
+        ]
+
+    });
+
+
+    createNPC({
+
+        id: "healer_mara",
+
+        name: "Mara",
+
+        role: "Şifacı",
+
+        personality:
+            "Sakin, yardımsever ve dikkatli.",
+
+        location:
+            "Blackmoor Köyü",
+
+        trust: 5,
+
+        secrets: [
+            "Kardeşi birkaç gün önce ortadan kayboldu."
+        ],
+
+        knowledge: [
+            "Kardeşinin son kez kilise yakınında görüldüğünü biliyor.",
+            "Köyün eski rahibinden korkuyor."
+        ]
+
+    });
+
+
+    createNPC({
+
+        id: "blacksmith_aldric",
+
+        name: "Aldric",
+
+        role: "Demirci",
+
+        personality:
+            "Sert konuşan, gururlu ve çalışkan.",
+
+        location:
+            "Blackmoor Köyü",
+
+        trust: 0,
+
+        secrets: [
+            "Köyün altında eski tüneller olduğunu biliyor."
+        ],
+
+        knowledge: [
+            "Son haftalarda ormandan garip sesler geliyor."
+        ]
+
+    });
+
+}
+
+
+/* =========================================================
+   GÖREV OLUŞTUR
+========================================================= */
+
+function createQuest(data) {
+
+    const existing =
+        game.quests.find(
+            quest => quest.id === data.id
+        );
+
+
+    if (existing) {
+
+        return existing;
+
+    }
+
+
+    const quest = {
+
+        id: data.id,
+
+        title: data.title,
+
+        description: data.description,
+
+        objectives:
+            (data.objectives || []).map(
+                objective => ({
+
+                    id: objective.id,
+
+                    text: objective.text,
+
+                    completed: false
+
+                })
+            ),
+
+        reward:
+            data.reward || 0,
+
+        status: "active",
+
+        createdAt:
+            new Date().toISOString()
+
+    };
+
+
+    game.quests.push(quest);
+
+
+    return quest;
+
+}
+
+
+/* =========================================================
+   GÖREVLERİ BAŞLAT
+========================================================= */
+
+function initializeQuests() {
+
+    createQuest({
+
+        id: "blackmoor_whispers",
+
+        title: "Blackmoor'un Fısıltıları",
+
+        description:
+            "Köy kuyusundan gelen gizemli seslerin kaynağını araştır.",
+
+        objectives: [
+
+            {
+                id: "visit_well",
+                text: "Köy kuyusunu araştır."
+            },
+
+            {
+                id: "learn_secret",
+                text: "Kuyunun sırrı hakkında bilgi edin."
+            }
+
+        ],
+
+        reward: 100
+
+    });
+
+
+    createQuest({
+
+        id: "missing_person",
+
+        title: "Kayıp Köylü",
+
+        description:
+            "Blackmoor'da kaybolan kişinin izini araştır.",
+
+        objectives: [
+
+            {
+                id: "talk_healer",
+                text: "Mara ile konuş."
+            },
+
+            {
+                id: "find_clue",
+                text: "Kaybolan kişiye ait bir ipucu bul."
+            }
+
+        ],
+
+        reward: 150
+
+    });
+
+}
+
+
+/* =========================================================
+   GÖREV İLERLEMESİ
+========================================================= */
+
+function updateQuestProgress(
+    questId,
+    objectiveId
 ) {
 
-    if (!element) {
+    const quest =
+        game.quests.find(
+            q => q.id === questId
+        );
+
+
+    if (!quest) {
+
         return;
+
     }
 
-    element.textContent =
-        value;
+
+    const objective =
+        quest.objectives.find(
+            o => o.id === objectiveId
+        );
+
+
+    if (!objective) {
+
+        return;
+
+    }
+
+
+    if (objective.completed) {
+
+        return;
+
+    }
+
+
+    objective.completed = true;
+
+
+    const allCompleted =
+        quest.objectives.every(
+            o => o.completed
+        );
+
+
+    if (allCompleted) {
+
+        quest.status =
+            "completed";
+
+        game.player.xp +=
+            quest.reward;
+
+        addStoryMessage(
+            `
+            <b>📜 Görev Tamamlandı!</b>
+
+            <br><br>
+
+            ${escapeHTML(quest.title)}
+
+            <br><br>
+
+            <b>+${quest.reward} XP</b>
+            `,
+            "dm"
+        );
+
+        updateCharacterUI();
+
+    }
+
+
+    updateQuestUI();
 
 }
 
 
 /* =========================================================
-   7. KARAKTER PANELİ
+   GÖREV ARAYÜZİ
+========================================================= */
+
+function updateQuestUI() {
+
+    if (!questsPanel) {
+
+        return;
+
+    }
+
+
+    questsPanel.innerHTML = "";
+
+
+    if (
+        !game.quests ||
+        game.quests.length === 0
+    ) {
+
+        questsPanel.innerHTML = `
+            <p class="empty">
+                Aktif görev yok.
+            </p>
+        `;
+
+        if (questCount) {
+
+            questCount.textContent =
+                "0";
+
+        }
+
+        return;
+
+    }
+
+
+    let activeCount = 0;
+
+
+    game.quests.forEach(function(quest) {
+
+        if (quest.status === "active") {
+
+            activeCount++;
+
+        }
+
+
+        const questElement =
+            document.createElement("div");
+
+        questElement.classList.add(
+            "quest-item"
+        );
+
+
+        const completed =
+            quest.status === "completed";
+
+
+        if (completed) {
+
+            questElement.classList.add(
+                "completed"
+            );
+
+        }
+
+
+        let objectivesHTML = "";
+
+
+        quest.objectives.forEach(
+            function(objective) {
+
+                objectivesHTML += `
+
+                    <div class="quest-objective">
+
+                        <span>
+                            ${objective.completed ? "✅" : "⬜"}
+                        </span>
+
+                        <span>
+                            ${escapeHTML(objective.text)}
+                        </span>
+
+                    </div>
+
+                `;
+
+            }
+        );
+
+
+        questElement.innerHTML = `
+
+            <div class="quest-title">
+
+                <strong>
+                    ${escapeHTML(quest.title)}
+                </strong>
+
+            </div>
+
+
+            <div class="quest-description">
+
+                ${escapeHTML(quest.description)}
+
+            </div>
+
+
+            <div class="quest-objectives">
+
+                ${objectivesHTML}
+
+            </div>
+
+
+            <div class="quest-reward">
+
+                🎁 Ödül:
+                ${quest.reward} XP
+
+            </div>
+
+        `;
+
+
+        questsPanel.appendChild(
+            questElement
+        );
+
+    });
+
+
+    if (questCount) {
+
+        questCount.textContent =
+            activeCount;
+
+    }
+
+}
+
+
+/* =========================================================
+   ENVANTER
+========================================================= */
+
+function updateInventoryUI() {
+
+    console.log(
+        "📦 Envanter güncelleniyor..."
+    );
+
+
+    if (!inventoryPanel) {
+
+        console.error(
+            "❌ #inventory bulunamadı!"
+        );
+
+        return;
+
+    }
+
+
+    inventoryPanel.innerHTML = "";
+
+
+    const inventory =
+        game.player.inventory || [];
+
+
+    /*
+       TOPLAM EŞYA ÇEŞİDİ
+    */
+
+    if (inventoryCount) {
+
+        inventoryCount.textContent =
+            inventory.length;
+
+    }
+
+
+    /*
+       ENVANTER BOŞSA
+    */
+
+    if (inventory.length === 0) {
+
+        inventoryPanel.innerHTML = `
+
+            <div class="empty">
+
+                🎒 Envanter boş.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    /*
+       EŞYALARI OLUŞTUR
+    */
+
+    inventory.forEach(
+        function(item) {
+
+            const itemElement =
+                document.createElement("div");
+
+
+            itemElement.classList.add(
+                "inventory-item"
+            );
+
+
+            let icon =
+                "📦";
+
+
+            if (
+                item.type === "weapon"
+            ) {
+
+                icon = "⚔️";
+
+            }
+
+            else if (
+                item.type === "consumable"
+            ) {
+
+                icon = "🧪";
+
+            }
+
+            else if (
+                item.type === "utility"
+            ) {
+
+                icon = "🔥";
+
+            }
+
+
+            let extraInfo = "";
+
+
+            if (item.damage) {
+
+                extraInfo += `
+
+                    <span>
+                        ⚔️ Hasar: ${escapeHTML(item.damage)}
+                    </span>
+
+                `;
+
+            }
+
+
+            itemElement.innerHTML = `
+
+                <div class="inventory-item-icon">
+
+                    ${icon}
+
+                </div>
+
+
+                <div class="inventory-item-info">
+
+                    <strong>
+                        ${escapeHTML(item.name)}
+                    </strong>
+
+
+                    <span>
+                        Adet: ${item.quantity}
+                    </span>
+
+
+                    ${extraInfo}
+
+                </div>
+
+            `;
+
+
+            inventoryPanel.appendChild(
+                itemElement
+            );
+
+        }
+    );
+
+
+    console.log(
+        "📦 Envanter hazır:",
+        inventory
+    );
+
+}
+
+
+/* =========================================================
+   ENVANTERİ AÇ
+========================================================= */
+
+function openInventory() {
+
+    console.log(
+        "🎒 ENVANTER AÇILIYOR"
+    );
+
+
+    if (!inventoryModal) {
+
+        console.error(
+            "❌ inventoryModal bulunamadı!"
+        );
+
+        return;
+
+    }
+
+
+    updateInventoryUI();
+
+
+    inventoryModal.classList.remove(
+        "hidden"
+    );
+
+
+    document.body.classList.add(
+        "modal-open"
+    );
+
+
+    console.log(
+        "🎒 Envanter açık."
+    );
+
+}
+
+
+/* =========================================================
+   ENVANTERİ KAPAT
+========================================================= */
+
+function closeInventoryModal() {
+
+    if (!inventoryModal) {
+
+        return;
+
+    }
+
+
+    inventoryModal.classList.add(
+        "hidden"
+    );
+
+
+    document.body.classList.remove(
+        "modal-open"
+    );
+
+
+    console.log(
+        "🎒 Envanter kapatıldı."
+    );
+
+}
+
+
+/* =========================================================
+   ENVANTER BUTONU
+========================================================= */
+
+if (inventoryButton) {
+
+    inventoryButton.addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            console.log(
+                "🎒 ENVANTER BUTONUNA BASILDI"
+            );
+
+
+            if (
+                inventoryModal.classList.contains(
+                    "hidden"
+                )
+            ) {
+
+                openInventory();
+
+            } else {
+
+                closeInventoryModal();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ENVANTER KAPATMA BUTONU
+========================================================= */
+
+if (closeInventory) {
+
+    closeInventory.addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+            closeInventoryModal();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ENVANTER MODAL DIŞINA TIKLAMA
+========================================================= */
+
+if (inventoryModal) {
+
+    inventoryModal.addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target === inventoryModal
+            ) {
+
+                closeInventoryModal();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ESC İLE PENCERE KAPATMA
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key !== "Escape") {
+
+            return;
+
+        }
+
+
+        if (
+            inventoryModal &&
+            !inventoryModal.classList.contains(
+                "hidden"
+            )
+        ) {
+
+            closeInventoryModal();
+
+        }
+
+
+        if (
+            characterModal &&
+            !characterModal.classList.contains(
+                "hidden"
+            )
+        ) {
+
+            closeCharacterModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   KARAKTER PANELİ
 ========================================================= */
 
 function showCharacter() {
 
-    if (!elements.characterModal) {
-
-        console.error(
-            "❌ characterModal bulunamadı."
-        );
+    if (!characterModal) {
 
         return;
 
@@ -464,102 +1594,123 @@ function showCharacter() {
     updateCharacterInfo();
 
 
-    elements.characterModal
-        .classList
-        .remove("hidden");
+    characterModal.classList.remove(
+        "hidden"
+    );
+
+
+    document.body.classList.add(
+        "modal-open"
+    );
 
 }
 
 
 /* =========================================================
-   8. KARAKTER BİLGİSİ
+   KARAKTER BİLGİLERİ
 ========================================================= */
 
 function updateCharacterInfo() {
 
-    if (!elements.characterInfo) {
+    if (!characterInfo) {
+
         return;
+
     }
 
 
-    const p =
-        game.player;
-
-
-    elements.characterInfo.innerHTML = `
+    characterInfo.innerHTML = `
 
         <p>
             <strong>İsim:</strong>
-            ${escapeHTML(p.name)}
+            ${escapeHTML(game.player.name)}
         </p>
+
 
         <p>
             <strong>Irk:</strong>
-            ${escapeHTML(p.race)}
+            ${escapeHTML(game.player.race)}
         </p>
+
 
         <p>
             <strong>Sınıf:</strong>
-            ${escapeHTML(p.className)}
+            ${escapeHTML(game.player.className)}
         </p>
+
 
         <p>
             <strong>Geçmiş:</strong>
-            ${escapeHTML(p.background)}
+            ${escapeHTML(game.player.background)}
         </p>
+
 
         <p>
             <strong>Seviye:</strong>
-            ${p.level}
+            ${game.player.level}
         </p>
+
 
         <p>
             <strong>XP:</strong>
-            ${p.xp}
+            ${game.player.xp}
         </p>
+
+
+        <hr>
+
 
         <p>
             <strong>Can:</strong>
-            ${p.hp} / ${p.maxHp}
+            ${game.player.hp} / ${game.player.maxHp}
         </p>
 
+
         <hr>
+
 
         <p>
             <strong>Güç:</strong>
-            ${p.stats.strength}
+            ${game.player.stats.strength}
         </p>
+
 
         <p>
             <strong>Çeviklik:</strong>
-            ${p.stats.dexterity}
+            ${game.player.stats.dexterity}
         </p>
+
 
         <p>
             <strong>Dayanıklılık:</strong>
-            ${p.stats.constitution}
+            ${game.player.stats.constitution}
         </p>
+
 
         <p>
             <strong>Zeka:</strong>
-            ${p.stats.intelligence}
+            ${game.player.stats.intelligence}
         </p>
+
 
         <p>
             <strong>Bilgelik:</strong>
-            ${p.stats.wisdom}
+            ${game.player.stats.wisdom}
         </p>
+
 
         <p>
             <strong>Karizma:</strong>
-            ${p.stats.charisma}
+            ${game.player.stats.charisma}
         </p>
+
 
         <hr>
 
+
         <p>
             <strong>Altın:</strong>
-            ${p.gold}
+            ${game.player.gold}
         </p>
 
     `;
@@ -568,24 +1719,114 @@ function updateCharacterInfo() {
 
 
 /* =========================================================
-   9. KARAKTER MODALINI KAPAT
+   KARAKTER PANELİNİ KAPAT
 ========================================================= */
 
 function closeCharacterModal() {
 
-    if (!elements.characterModal) {
+    if (!characterModal) {
+
         return;
+
     }
 
-    elements.characterModal
-        .classList
-        .add("hidden");
+
+    characterModal.classList.add(
+        "hidden"
+    );
+
+
+    document.body.classList.remove(
+        "modal-open"
+    );
 
 }
 
 
 /* =========================================================
-   10. SINIF İSTATİSTİKLERİ
+   KARAKTER BUTONU
+========================================================= */
+
+if (characterButton) {
+
+    characterButton.addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+            showCharacter();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   KARAKTER KAPAT
+========================================================= */
+
+if (closeCharacter) {
+
+    closeCharacter.addEventListener(
+        "click",
+        function() {
+
+            closeCharacterModal();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   KARAKTER MODAL DIŞINA TIKLAMA
+========================================================= */
+
+if (characterModal) {
+
+    characterModal.addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target === characterModal
+            ) {
+
+                closeCharacterModal();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   KARAKTER OLUŞTURMA ELEMANLARI
+========================================================= */
+
+const nameInput =
+    document.getElementById("nameInput");
+
+const raceInput =
+    document.getElementById("raceInput");
+
+const classInput =
+    document.getElementById("classInput");
+
+const backgroundInput =
+    document.getElementById("backgroundInput");
+
+const createCharacterButton =
+    document.getElementById("createCharacter");
+
+
+/* =========================================================
+   SINIF STATLARI
 ========================================================= */
 
 const classStats = {
@@ -598,7 +1839,6 @@ const classStats = {
         intelligence: 10,
         wisdom: 11,
         charisma: 10,
-
         maxHp: 24
 
     },
@@ -612,7 +1852,6 @@ const classStats = {
         intelligence: 18,
         wisdom: 15,
         charisma: 10,
-
         maxHp: 16
 
     },
@@ -626,7 +1865,6 @@ const classStats = {
         intelligence: 13,
         wisdom: 10,
         charisma: 14,
-
         maxHp: 18
 
     },
@@ -640,7 +1878,6 @@ const classStats = {
         intelligence: 10,
         wisdom: 13,
         charisma: 16,
-
         maxHp: 23
 
     },
@@ -654,7 +1891,6 @@ const classStats = {
         intelligence: 11,
         wisdom: 14,
         charisma: 10,
-
         maxHp: 20
 
     }
@@ -663,7 +1899,7 @@ const classStats = {
 
 
 /* =========================================================
-   11. IRK BONUSLARI
+   IRK BONUSLARI
 ========================================================= */
 
 const raceBonuses = {
@@ -717,16 +1953,16 @@ const raceBonuses = {
 
 
 /* =========================================================
-   12. KARAKTER OLUŞTUR
+   KARAKTER OLUŞTUR
 ========================================================= */
 
 function createCharacter() {
 
     if (
-        !elements.nameInput ||
-        !elements.raceInput ||
-        !elements.classInput ||
-        !elements.backgroundInput
+        !nameInput ||
+        !raceInput ||
+        !classInput ||
+        !backgroundInput
     ) {
 
         console.error(
@@ -739,16 +1975,19 @@ function createCharacter() {
 
 
     const name =
-        elements.nameInput.value.trim();
+        nameInput.value.trim();
+
 
     const race =
-        elements.raceInput.value;
+        raceInput.value;
+
 
     const className =
-        elements.classInput.value;
+        classInput.value;
+
 
     const background =
-        elements.backgroundInput.value;
+        backgroundInput.value;
 
 
     if (!name) {
@@ -757,7 +1996,7 @@ function createCharacter() {
             "Önce karakterine bir isim vermelisin."
         );
 
-        elements.nameInput.focus();
+        nameInput.focus();
 
         return;
 
@@ -766,6 +2005,7 @@ function createCharacter() {
 
     const baseStats =
         classStats[className];
+
 
     const bonuses =
         raceBonuses[race];
@@ -782,27 +2022,7 @@ function createCharacter() {
     }
 
 
-    game.player.name =
-        name;
-
-    game.player.race =
-        race;
-
-    game.player.className =
-        className;
-
-    game.player.background =
-        background;
-
-
-    game.player.level =
-        1;
-
-    game.player.xp =
-        0;
-
-
-    game.player.stats = {
+    const newStats = {
 
         strength:
             baseStats.strength +
@@ -830,6 +2050,27 @@ function createCharacter() {
 
     };
 
+
+    game.player.name =
+        name;
+
+    game.player.race =
+        race;
+
+    game.player.className =
+        className;
+
+    game.player.background =
+        background;
+
+    game.player.level =
+        1;
+
+    game.player.xp =
+        0;
+
+    game.player.stats =
+        newStats;
 
     game.player.maxHp =
         baseStats.maxHp;
@@ -859,23 +2100,23 @@ function createCharacter() {
 
         <br><br>
 
-        <b>Irk:</b>
-        ${escapeHTML(race)}
+        Irk:
+        <b>${escapeHTML(race)}</b>
 
         <br>
 
-        <b>Sınıf:</b>
-        ${escapeHTML(className)}
+        Sınıf:
+        <b>${escapeHTML(className)}</b>
 
         <br>
 
-        <b>Geçmiş:</b>
-        ${escapeHTML(background)}
+        Geçmiş:
+        <b>${escapeHTML(background)}</b>
 
         <br><br>
 
         Bundan sonra vereceğin kararlar
-        karakterinin kaderini şekillendirecek.
+        bu karakterin hikâyesini şekillendirecek.
 
         `,
 
@@ -883,746 +2124,182 @@ function createCharacter() {
 
     );
 
-}
-
-
-/* =========================================================
-   13. ENVANTER
-========================================================= */
-
-function updateInventoryUI() {
 
     console.log(
-        "📦 Envanter güncelleniyor..."
-    );
-
-
-    if (!elements.inventory) {
-
-        console.error(
-            "❌ #inventory bulunamadı."
-        );
-
-        return;
-
-    }
-
-
-    const inventory =
-        Array.isArray(
-            game.player.inventory
-        )
-            ? game.player.inventory
-            : [];
-
-
-    elements.inventory.innerHTML = "";
-
-
-    if (elements.inventoryCount) {
-
-        const total =
-            inventory.reduce(
-                function(sum, item) {
-
-                    return sum +
-                        Number(item.quantity || 1);
-
-                },
-                0
-            );
-
-
-        elements.inventoryCount.textContent =
-            total;
-
-    }
-
-
-    if (inventory.length === 0) {
-
-        elements.inventory.innerHTML = `
-
-            <p class="empty">
-                Envanter boş.
-            </p>
-
-        `;
-
-        return;
-
-    }
-
-
-    inventory.forEach(
-        function(item) {
-
-            const itemElement =
-                document.createElement("div");
-
-
-            itemElement.className =
-                "inventory-item";
-
-
-            let icon =
-                "📦";
-
-
-            if (item.type === "weapon") {
-
-                icon =
-                    "⚔️";
-
-            }
-
-            else if (
-                item.type === "consumable"
-            ) {
-
-                icon =
-                    "🧪";
-
-            }
-
-            else if (
-                item.type === "utility"
-            ) {
-
-                icon =
-                    "🔥";
-
-            }
-
-
-            const damageHTML =
-                item.damage
-                    ? `
-                        <span>
-                            Hasar: ${escapeHTML(item.damage)}
-                        </span>
-                    `
-                    : "";
-
-
-            itemElement.innerHTML = `
-
-                <div class="inventory-item-icon">
-                    ${icon}
-                </div>
-
-                <div class="inventory-item-info">
-
-                    <strong>
-                        ${escapeHTML(item.name)}
-                    </strong>
-
-                    <span>
-                        Adet:
-                        ${Number(item.quantity || 1)}
-                    </span>
-
-                    ${damageHTML}
-
-                </div>
-
-            `;
-
-
-            elements.inventory.appendChild(
-                itemElement
-            );
-
-        }
-    );
-
-
-    console.log(
-        "📦 Envanter hazır:",
-        inventory
+        "Yeni karakter:",
+        game.player
     );
 
 }
 
 
 /* =========================================================
-   14. ENVANTER BUTONU
+   KARAKTER ARAYÜZÜ
 ========================================================= */
 
-function toggleInventory() {
+function updateCharacterUI() {
 
-    console.log(
-        "🎒 ENVANTER BUTONUNA BASILDI"
-    );
-
-
-    updateInventoryUI();
-
-
-    const rightPanel =
-        elements.inventory
-            ? elements.inventory.closest(".side-card")
-            : null;
-
-
-    if (rightPanel) {
-
-        rightPanel.classList.toggle(
-            "inventory-active"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   15. GÖREV SİSTEMİ
-========================================================= */
-
-function createQuest(data) {
-
-    if (!data || !data.id) {
-        return null;
-    }
-
-
-    const existing =
-        game.quests.find(
-            quest =>
-                quest.id === data.id
+    const nameElement =
+        document.getElementById(
+            "characterName"
         );
 
 
-    if (existing) {
-
-        return existing;
-
-    }
-
-
-    const quest = {
-
-        id: data.id,
-
-        title: data.title,
-
-        description:
-            data.description,
-
-        objectives:
-            (data.objectives || []).map(
-                objective => ({
-
-                    id: objective.id,
-
-                    text: objective.text,
-
-                    completed: false
-
-                })
-            ),
-
-        reward:
-            data.reward || 0,
-
-        status:
-            "active",
-
-        createdAt:
-            new Date().toISOString()
-
-    };
-
-
-    game.quests.push(
-        quest
-    );
-
-
-    return quest;
-
-}
-
-
-/* =========================================================
-   16. BAŞLANGIÇ GÖREVLERİ
-========================================================= */
-
-function initializeQuests() {
-
-    createQuest({
-
-        id:
-            "blackmoor_whispers",
-
-        title:
-            "Blackmoor'un Fısıltıları",
-
-        description:
-            "Köy kuyusundan gelen gizemli seslerin kaynağını araştır.",
-
-        objectives: [
-
-            {
-                id:
-                    "visit_well",
-
-                text:
-                    "Köy kuyusunu araştır."
-
-            },
-
-            {
-                id:
-                    "learn_secret",
-
-                text:
-                    "Kuyunun sırrı hakkında bilgi edin."
-
-            }
-
-        ],
-
-        reward:
-            100
-
-    });
-
-
-    createQuest({
-
-        id:
-            "missing_person",
-
-        title:
-            "Kayıp Köylü",
-
-        description:
-            "Blackmoor'da kaybolan kişinin izini araştır.",
-
-        objectives: [
-
-            {
-                id:
-                    "talk_healer",
-
-                text:
-                    "Mara ile konuş."
-
-            },
-
-            {
-                id:
-                    "find_clue",
-
-                text:
-                    "Kaybolan kişiye ait bir ipucu bul."
-
-            }
-
-        ],
-
-        reward:
-            150
-
-    });
-
-}
-
-
-/* =========================================================
-   17. GÖREV ARAYÜZÜ
-========================================================= */
-
-function updateQuestUI() {
-
-    if (!elements.quests) {
-
-        console.error(
-            "❌ #quests bulunamadı."
-        );
-
-        return;
-
-    }
-
-
-    const quests =
-        Array.isArray(game.quests)
-            ? game.quests
-            : [];
-
-
-    elements.quests.innerHTML = "";
-
-
-    if (elements.questCount) {
-
-        elements.questCount.textContent =
-            quests.length;
-
-    }
-
-
-    if (quests.length === 0) {
-
-        elements.quests.innerHTML = `
-
-            <p class="empty">
-                Aktif görev yok.
-            </p>
-
-        `;
-
-        return;
-
-    }
-
-
-    quests.forEach(
-        function(quest) {
-
-            const questElement =
-                document.createElement("div");
-
-
-            questElement.className =
-                "quest-item";
-
-
-            const objectives =
-                quest.objectives
-                    .map(
-                        function(objective) {
-
-                            return `
-
-                                <div
-                                    class="
-                                        quest-objective
-                                        ${objective.completed
-                                            ? "completed"
-                                            : ""}
-                                    "
-                                >
-
-                                    ${
-                                        objective.completed
-                                            ? "☑️"
-                                            : "⬜"
-                                    }
-
-                                    ${escapeHTML(
-                                        objective.text
-                                    )}
-
-                                </div>
-
-                            `;
-
-                        }
-                    )
-                    .join("");
-
-
-            questElement.innerHTML = `
-
-                <div class="quest-title">
-
-                    📜
-                    ${escapeHTML(quest.title)}
-
-                </div>
-
-
-                <div class="quest-description">
-
-                    ${escapeHTML(
-                        quest.description
-                    )}
-
-                </div>
-
-
-                ${objectives}
-
-            `;
-
-
-            elements.quests.appendChild(
-                questElement
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   18. NPC SİSTEMİ
-========================================================= */
-
-function createNPC(data) {
-
-    if (!data || !data.id) {
-        return null;
-    }
-
-
-    const existing =
-        game.npcs.find(
-            npc =>
-                npc.id === data.id
+    const classElement =
+        document.getElementById(
+            "characterClass"
         );
 
 
-    if (existing) {
+    const hpElement =
+        document.getElementById(
+            "hp"
+        );
 
-        return existing;
+
+    const levelElement =
+        document.getElementById(
+            "level"
+        );
+
+
+    const xpElement =
+        document.getElementById(
+            "xp"
+        );
+
+
+    const goldElement =
+        document.getElementById(
+            "gold"
+        );
+
+
+    if (nameElement) {
+
+        nameElement.textContent =
+            game.player.name;
 
     }
 
 
-    const npc = {
+    if (classElement) {
 
-        id:
-            data.id,
+        classElement.textContent =
+            `${game.player.race} ${game.player.className}`;
 
-        name:
-            data.name,
-
-        role:
-            data.role,
-
-        personality:
-            data.personality,
-
-        location:
-            data.location,
-
-        trust:
-            data.trust || 0,
-
-        secrets:
-            data.secrets || [],
-
-        knowledge:
-            data.knowledge || [],
-
-        relationshipHistory:
-            []
-
-    };
+    }
 
 
-    game.npcs.push(
-        npc
+    if (hpElement) {
+
+        hpElement.textContent =
+            `${game.player.hp} / ${game.player.maxHp}`;
+
+    }
+
+
+    if (levelElement) {
+
+        levelElement.textContent =
+            game.player.level;
+
+    }
+
+
+    if (xpElement) {
+
+        xpElement.textContent =
+            game.player.xp;
+
+    }
+
+
+    if (goldElement) {
+
+        goldElement.textContent =
+            game.player.gold;
+
+    }
+
+
+    updateStat(
+        "strength",
+        game.player.stats.strength
     );
 
 
-    return npc;
+    updateStat(
+        "dexterity",
+        game.player.stats.dexterity
+    );
+
+
+    updateStat(
+        "constitution",
+        game.player.stats.constitution
+    );
+
+
+    updateStat(
+        "intelligence",
+        game.player.stats.intelligence
+    );
+
+
+    updateStat(
+        "wisdom",
+        game.player.stats.wisdom
+    );
+
+
+    updateStat(
+        "charisma",
+        game.player.stats.charisma
+    );
 
 }
 
 
 /* =========================================================
-   19. NPC BAŞLANGICI
+   STAT GÜNCELLE
 ========================================================= */
 
-function initializeNPCs() {
-
-    createNPC({
-
-        id:
-            "elder_jonas",
-
-        name:
-            "Jonas",
-
-        role:
-            "Yaşlı Köylü",
-
-        personality:
-            "Şüpheci, korkak fakat köyünü korumaya çalışan biri.",
-
-        location:
-            "Blackmoor Köyü",
-
-        trust:
-            0,
-
-        secrets: [
-
-            "Kuyudan gelen seslerin yeni olmadığını biliyor.",
-
-            "Yıllar önce kuyuda bir çocuğun kaybolduğunu saklıyor."
-
-        ],
-
-        knowledge: [
-
-            "Köy kuyusundan geceleri fısıltılar geliyor.",
-
-            "Terk edilmiş kilisede bazen ışık görülüyor."
-
-        ]
-
-    });
-
-
-    createNPC({
-
-        id:
-            "healer_mara",
-
-        name:
-            "Mara",
-
-        role:
-            "Şifacı",
-
-        personality:
-            "Sakin, yardımsever ve dikkatli.",
-
-        location:
-            "Blackmoor Köyü",
-
-        trust:
-            5,
-
-        secrets: [
-
-            "Kardeşi birkaç gün önce ortadan kayboldu."
-
-        ],
-
-        knowledge: [
-
-            "Kardeşinin son kez kilise yakınında görüldüğünü biliyor.",
-
-            "Köyün eski rahibinden korkuyor."
-
-        ]
-
-    });
-
-
-    createNPC({
-
-        id:
-            "blacksmith_aldric",
-
-        name:
-            "Aldric",
-
-        role:
-            "Demirci",
-
-        personality:
-            "Sert konuşan, gururlu ve çalışkan.",
-
-        location:
-            "Blackmoor Köyü",
-
-        trust:
-            0,
-
-        secrets: [
-
-            "Köyün altında eski tüneller olduğunu biliyor."
-
-        ],
-
-        knowledge: [
-
-            "Son haftalarda ormandan garip sesler geliyor."
-
-        ]
-
-    });
-
-}
-
-
-/* =========================================================
-   20. KONUM
-========================================================= */
-
-function changeLocation(
-    newLocation
+function updateStat(
+    id,
+    value
 ) {
 
-    const oldLocation =
-        game.world.location;
+    const element =
+        document.getElementById(id);
 
 
-    if (
-        oldLocation ===
-        newLocation
-    ) {
+    if (element) {
 
-        return;
+        element.textContent =
+            value;
 
     }
-
-
-    game.world.location =
-        newLocation;
-
-
-    if (
-        !game.story.discoveredLocations
-            .includes(newLocation)
-    ) {
-
-        game.story.discoveredLocations
-            .push(newLocation);
-
-    }
-
-
-    game.story.events.push({
-
-        type:
-            "location_change",
-
-        from:
-            oldLocation,
-
-        to:
-            newLocation,
-
-        timestamp:
-            new Date().toISOString()
-
-    });
-
-
-    updateWorldUI();
 
 }
 
 
 /* =========================================================
-   21. DÜNYA ARAYÜZÜ
+   KARAKTER OLUŞTUR BUTONU
 ========================================================= */
 
-function updateWorldUI() {
+if (createCharacterButton) {
 
-    if (elements.location) {
-
-        elements.location.textContent =
-            game.world.location;
-
-    }
+    createCharacterButton.addEventListener(
+        "click",
+        createCharacter
+    );
 
 }
 
 
 /* =========================================================
-   22. D20
+   ZAR SİSTEMİ
 ========================================================= */
 
 function rollD20() {
@@ -1633,9 +2310,9 @@ function rollD20() {
         ) + 1;
 
 
-    if (elements.diceResult) {
+    if (diceResult) {
 
-        elements.diceResult.textContent =
+        diceResult.textContent =
             result;
 
     }
@@ -1647,21 +2324,41 @@ function rollD20() {
     if (result === 20) {
 
         message =
-            "🎲 <b>KRİTİK BAŞARI!</b> Zar 20 geldi.";
+            `
+            🎲 <b>Kritik Başarı!</b>
+
+            <br><br>
+
+            Zar sonucu:
+            <b>20</b>
+
+            `;
 
     }
 
     else if (result === 1) {
 
         message =
-            "🎲 <b>KRİTİK BAŞARISIZLIK!</b> Zar 1 geldi.";
+            `
+            🎲 <b>Kritik Başarısızlık!</b>
+
+            <br><br>
+
+            Zar sonucu:
+            <b>1</b>
+
+            `;
 
     }
 
     else {
 
         message =
-            `🎲 Zar atıldı: <b>${result}</b>`;
+            `
+            🎲 D20 sonucu:
+
+            <b>${result}</b>
+            `;
 
     }
 
@@ -1671,536 +2368,21 @@ function rollD20() {
         "dm"
     );
 
-
-    game.story.events.push({
-
-        type:
-            "dice_roll",
-
-        result:
-            result,
-
-        timestamp:
-            new Date().toISOString()
-
-    });
-
 }
 
 
-/* =========================================================
-   23. OYUNCU EYLEMİ
-========================================================= */
+if (rollButton) {
 
-function playerAction() {
-
-    if (!elements.playerInput) {
-
-        console.error(
-            "❌ playerInput bulunamadı."
-        );
-
-        return;
-
-    }
-
-
-    const text =
-        elements.playerInput.value.trim();
-
-
-    if (!text) {
-        return;
-    }
-
-
-    addStoryMessage(
-        escapeHTML(text),
-        "player"
-    );
-
-
-    game.story.actions.push({
-
-        text:
-            text,
-
-        location:
-            game.world.location,
-
-        time:
-            game.world.time,
-
-        timestamp:
-            new Date().toISOString()
-
-    });
-
-
-    elements.playerInput.value =
-        "";
-
-
-    dungeonMaster(
-        text
+    rollButton.addEventListener(
+        "click",
+        rollD20
     );
 
 }
 
 
 /* =========================================================
-   24. DUNGEON MASTER
-========================================================= */
-
-function dungeonMaster(
-    action
-) {
-
-    const lower =
-        action.toLocaleLowerCase(
-            "tr-TR"
-        );
-
-
-    let response;
-
-
-    /* KUYU */
-
-    if (
-
-        lower.includes("kuyu") ||
-
-        lower.includes("aşağı") ||
-
-        lower.includes("dinliyorum")
-
-    ) {
-
-        game.story.flags.well =
-            true;
-
-
-        completeQuestObjective(
-            "blackmoor_whispers",
-            "visit_well"
-        );
-
-
-        response = `
-
-            Kuyunun taş kenarına yaklaşıyorsun.
-
-            <br><br>
-
-            Yağmur taşların üzerinde küçük nehirler
-            oluştururken aşağıdan belli belirsiz bir ses
-            yükseliyor.
-
-            <br><br>
-
-            Önce bunun rüzgâr olduğunu düşünüyorsun.
-
-            Fakat birkaç saniye sonra aynı fısıltıyı
-            tekrar duyuyorsun.
-
-            <br><br>
-
-            <i>"Beni bul..."</i>
-
-        `;
-
-    }
-
-
-    /* KİLİSE */
-
-    else if (
-
-        lower.includes("kilise") ||
-
-        lower.includes("kiliseye")
-
-    ) {
-
-        game.story.flags.church =
-            true;
-
-
-        response = `
-
-            Terk edilmiş kilisenin bulunduğu sokağa
-            giriyorsun.
-
-            <br><br>
-
-            Kapının önündeki taş basamaklar yağmurdan
-            dolayı kaygan.
-
-            <br><br>
-
-            Kapı tamamen kapalı değil.
-
-            Aralıktan içeride çok zayıf bir mum ışığı
-            süzülüyor.
-
-            <br><br>
-
-            İçeride biri varmış gibi hissediyorsun.
-
-        `;
-
-    }
-
-
-    /* ORMAN */
-
-    else if (
-
-        lower.includes("orman") ||
-
-        lower.includes("ağaç")
-
-    ) {
-
-        changeLocation(
-            "Blackmoor Ormanı"
-        );
-
-
-        response = `
-
-            Köyün ışıkları arkanda kalıyor.
-
-            <br><br>
-
-            Ormana girdikçe yağmurun sesi azalıyor.
-
-            <br><br>
-
-            Ağaçların arasında görüş mesafesi giderek
-            düşüyor.
-
-            <br><br>
-
-            Bir süre sonra arkandan gelen ayak seslerini
-            fark ediyorsun.
-
-        `;
-
-    }
-
-
-    /* MARA */
-
-    else if (
-
-        lower.includes("mara") ||
-
-        lower.includes("şifacı")
-
-    ) {
-
-        completeQuestObjective(
-            "missing_person",
-            "talk_healer"
-        );
-
-
-        response = `
-
-            Şifacı Mara sana dikkatlice bakıyor.
-
-            <br><br>
-
-            <i>
-            "Kardeşim birkaç gün önce kayboldu."
-            </i>
-
-            <br><br>
-
-            Sesindeki korkuyu saklamaya çalışıyor.
-
-            <br><br>
-
-            "Onu en son kilisenin yakınında gördüler."
-
-        `;
-
-    }
-
-
-    /* KÖYLÜ */
-
-    else if (
-
-        lower.includes("köylü") ||
-
-        lower.includes("adam") ||
-
-        lower.includes("kadın")
-
-    ) {
-
-        response = `
-
-            Yakındaki köylülerden biri sana dikkatlice
-            bakıyor.
-
-            <br><br>
-
-            Birkaç saniye boyunca hiçbir şey söylemiyor.
-
-            <br><br>
-
-            Sonra yaklaşarak sesini alçaltıyor.
-
-            <br><br>
-
-            <i>
-            "Bu gece burada fazla dolaşma."
-            </i>
-
-        `;
-
-    }
-
-
-    /* ENVANTER */
-
-    else if (
-
-        lower.includes("envanter") ||
-
-        lower.includes("eşyalarım") ||
-
-        lower.includes("çantam")
-
-    ) {
-
-        updateInventoryUI();
-
-
-        response = `
-
-            Çantandaki eşyalara göz atıyorsun.
-
-            <br><br>
-
-            Envanterinde
-            <b>${game.player.inventory.length}</b>
-            farklı eşya bulunuyor.
-
-        `;
-
-    }
-
-
-    /* GENEL */
-
-    else {
-
-        response =
-            randomGenericResponse();
-
-    }
-
-
-    addStoryMessage(
-        response,
-        "dm"
-    );
-
-
-    game.story.events.push({
-
-        action:
-            action,
-
-        response:
-            response,
-
-        location:
-            game.world.location,
-
-        timestamp:
-            new Date().toISOString()
-
-    });
-
-
-    updateAllUI();
-
-}
-
-
-/* =========================================================
-   25. GENEL CEVAPLAR
-========================================================= */
-
-function randomGenericResponse() {
-
-    const responses = [
-
-        `
-
-        Etrafındaki dünya sessiz görünse de
-        tamamen hareketsiz değil.
-
-        <br><br>
-
-        Uzaklardan bir ses geliyor.
-
-        `,
-
-
-        `
-
-        Hamlen beklediğinden farklı bir etki yaratıyor.
-
-        <br><br>
-
-        Çevredeki insanların davranışlarında küçük
-        bir değişiklik fark ediyorsun.
-
-        `,
-
-
-        `
-
-        Birkaç saniye boyunca hiçbir şey olmuyor.
-
-        <br><br>
-
-        Sonra uzaktan metalik bir ses duyuluyor.
-
-        `,
-
-
-        `
-
-        İçgüdülerin sana burada gözden kaçırdığın
-        bir şey olduğunu söylüyor.
-
-        `,
-
-
-        `
-
-        Hareketin çevrenin sessizliğini bozuyor.
-
-        <br><br>
-
-        Karanlığın içinden bir gölge geçiyor.
-
-        `
-
-    ];
-
-
-    return responses[
-        Math.floor(
-            Math.random() *
-            responses.length
-        )
-    ];
-
-}
-
-
-/* =========================================================
-   26. GÖREV HEDEFİ TAMAMLA
-========================================================= */
-
-function completeQuestObjective(
-    questId,
-    objectiveId
-) {
-
-    const quest =
-        game.quests.find(
-            q =>
-                q.id === questId
-        );
-
-
-    if (!quest) {
-        return;
-    }
-
-
-    const objective =
-        quest.objectives.find(
-            o =>
-                o.id === objectiveId
-        );
-
-
-    if (!objective) {
-        return;
-    }
-
-
-    if (objective.completed) {
-        return;
-    }
-
-
-    objective.completed =
-        true;
-
-
-    const allCompleted =
-        quest.objectives.every(
-            o =>
-                o.completed
-        );
-
-
-    if (allCompleted) {
-
-        quest.status =
-            "completed";
-
-
-        game.player.xp +=
-            quest.reward;
-
-
-        addStoryMessage(
-
-            `
-            🎉 <b>Görev tamamlandı!</b>
-
-            <br><br>
-
-            <b>
-            ${escapeHTML(quest.title)}
-            </b>
-
-            <br><br>
-
-            Ödül:
-            <b>${quest.reward} XP</b>
-
-            `,
-
-            "dm"
-
-        );
-
-    }
-
-
-    updateQuestUI();
-
-    updateCharacterUI();
-
-}
-
-
-/* =========================================================
-   27. KAYDET
+   KAYDET
 ========================================================= */
 
 function saveGame() {
@@ -2218,6 +2400,7 @@ function saveGame() {
             "dm"
         );
 
+
         console.log(
             "💾 Oyun kaydedildi."
         );
@@ -2227,12 +2410,13 @@ function saveGame() {
     catch (error) {
 
         console.error(
-            "❌ Kayıt hatası:",
+            "Kaydetme hatası:",
             error
         );
 
+
         addStoryMessage(
-            "❌ Oyun kaydedilemedi.",
+            "❌ Oyun kaydedilirken bir hata oluştu.",
             "dm"
         );
 
@@ -2242,23 +2426,23 @@ function saveGame() {
 
 
 /* =========================================================
-   28. YÜKLE
+   YÜKLE
 ========================================================= */
 
 function loadGame() {
 
     try {
 
-        const saved =
+        const savedGame =
             localStorage.getItem(
                 "realmOfShadowsSave"
             );
 
 
-        if (!saved) {
+        if (!savedGame) {
 
             addStoryMessage(
-                "📂 Kaydedilmiş oyun bulunamadı.",
+                "📂 Kaydedilmiş bir oyun bulunamadı.",
                 "dm"
             );
 
@@ -2267,67 +2451,65 @@ function loadGame() {
         }
 
 
-        const loaded =
-            JSON.parse(saved);
+        const loadedGame =
+            JSON.parse(savedGame);
 
 
-        if (loaded.player) {
+        if (loadedGame.player) {
 
-            game.player =
-                loaded.player;
-
-        }
-
-
-        if (loaded.world) {
-
-            game.world =
-                loaded.world;
+            Object.assign(
+                game.player,
+                loadedGame.player
+            );
 
         }
 
 
-        if (loaded.npcs) {
+        if (loadedGame.world) {
 
-            game.npcs =
-                loaded.npcs;
-
-        }
-
-
-        if (loaded.quests) {
-
-            game.quests =
-                loaded.quests;
+            Object.assign(
+                game.world,
+                loadedGame.world
+            );
 
         }
 
 
-        if (loaded.story) {
+        if (loadedGame.story) {
 
-            game.story =
-                loaded.story;
-
-        }
-
-
-        if (loaded.combat) {
-
-            game.combat =
-                loaded.combat;
+            Object.assign(
+                game.story,
+                loadedGame.story
+            );
 
         }
 
 
-        if (loaded.ai) {
-
-            game.ai =
-                loaded.ai;
-
-        }
+        game.npcs =
+            loadedGame.npcs || [];
 
 
-        updateAllUI();
+        game.quests =
+            loadedGame.quests || [];
+
+
+        game.factions =
+            loadedGame.factions || [];
+
+
+        game.locations =
+            loadedGame.locations || [];
+
+
+        updateWorldUI();
+
+        updateCharacterUI();
+
+        updateCharacterInfo();
+
+        updateInventoryUI();
+
+        updateQuestUI();
 
 
         addStoryMessage(
@@ -2337,8 +2519,7 @@ function loadGame() {
 
 
         console.log(
-            "📂 Oyun yüklendi:",
-            game
+            "📂 Oyun yüklendi."
         );
 
     }
@@ -2346,12 +2527,13 @@ function loadGame() {
     catch (error) {
 
         console.error(
-            "❌ Yükleme hatası:",
+            "Yükleme hatası:",
             error
         );
 
+
         addStoryMessage(
-            "❌ Kayıt dosyası okunamadı.",
+            "❌ Kayıt yüklenirken bir hata oluştu.",
             "dm"
         );
 
@@ -2361,26 +2543,68 @@ function loadGame() {
 
 
 /* =========================================================
-   29. TÜM ARAYÜZÜ GÜNCELLE
+   BUTONLAR
 ========================================================= */
 
-function updateAllUI() {
+if (actionButton) {
 
-    updateCharacterUI();
+    actionButton.addEventListener(
+        "click",
+        playerAction
+    );
 
-    updateCharacterInfo();
+}
 
-    updateInventoryUI();
 
-    updateQuestUI();
+if (saveButton) {
 
-    updateWorldUI();
+    saveButton.addEventListener(
+        "click",
+        saveGame
+    );
+
+}
+
+
+if (loadButton) {
+
+    loadButton.addEventListener(
+        "click",
+        loadGame
+    );
 
 }
 
 
 /* =========================================================
-   30. DÜNYAYI HAZIRLA
+   ENTER
+========================================================= */
+
+if (playerInput) {
+
+    playerInput.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key === "Enter" &&
+                !event.shiftKey
+            ) {
+
+                event.preventDefault();
+
+                playerAction();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   OYUNU BAŞLAT
 ========================================================= */
 
 function initializeWorld() {
@@ -2393,7 +2617,7 @@ function initializeWorld() {
 
 
 /* =========================================================
-   31. BAŞLANGIÇ HİKAYESİ
+   BAŞLANGIÇ HİKAYESİ
 ========================================================= */
 
 function startGame() {
@@ -2403,10 +2627,26 @@ function startGame() {
     );
 
 
+    console.log(
+        "Game:",
+        game
+    );
+
+
+    updateWorldUI();
+
+    updateCharacterUI();
+
+    updateCharacterInfo();
+
+    updateInventoryUI();
+
+    updateQuestUI();
+
+
     addStoryMessage(
 
         `
-
         Yağmur, Blackmoor Köyü'nün taş
         sokaklarını dövüyor.
 
@@ -2424,12 +2664,6 @@ function startGame() {
 
         Gece daha yeni başlıyor.
 
-        <br><br>
-
-        <i>
-        Ne yapacaksın?
-        </i>
-
         `,
 
         "dm"
@@ -2440,220 +2674,36 @@ function startGame() {
 
 
 /* =========================================================
-   32. EVENT LISTENER'LAR
-========================================================= */
-
-
-/* KARAKTER */
-
-if (elements.characterButton) {
-
-    elements.characterButton
-        .addEventListener(
-            "click",
-            showCharacter
-        );
-
-}
-
-
-/* KARAKTER KAPAT */
-
-if (elements.closeCharacter) {
-
-    elements.closeCharacter
-        .addEventListener(
-            "click",
-            closeCharacterModal
-        );
-
-}
-
-
-/* MODAL DIŞINA TIKLAMA */
-
-if (elements.characterModal) {
-
-    elements.characterModal
-        .addEventListener(
-            "click",
-            function(event) {
-
-                if (
-                    event.target ===
-                    elements.characterModal
-                ) {
-
-                    closeCharacterModal();
-
-                }
-
-            }
-        );
-
-}
-
-
-/* ENVANTER */
-
-if (elements.inventoryButton) {
-
-    elements.inventoryButton
-        .addEventListener(
-            "click",
-            toggleInventory
-        );
-
-}
-
-
-/* EYLEM */
-
-if (elements.actionButton) {
-
-    elements.actionButton
-        .addEventListener(
-            "click",
-            playerAction
-        );
-
-}
-
-
-/* ENTER */
-
-if (elements.playerInput) {
-
-    elements.playerInput
-        .addEventListener(
-            "keydown",
-            function(event) {
-
-                if (
-                    event.key === "Enter" &&
-                    !event.shiftKey
-                ) {
-
-                    event.preventDefault();
-
-                    playerAction();
-
-                }
-
-            }
-        );
-
-}
-
-
-/* KAYDET */
-
-if (elements.saveButton) {
-
-    elements.saveButton
-        .addEventListener(
-            "click",
-            saveGame
-        );
-
-}
-
-
-/* YÜKLE */
-
-if (elements.loadButton) {
-
-    elements.loadButton
-        .addEventListener(
-            "click",
-            loadGame
-        );
-
-}
-
-
-/* ZAR */
-
-if (elements.rollButton) {
-
-    elements.rollButton
-        .addEventListener(
-            "click",
-            rollD20
-        );
-
-}
-
-
-/* KARAKTER OLUŞTUR */
-
-if (elements.createCharacter) {
-
-    elements.createCharacter
-        .addEventListener(
-            "click",
-            createCharacter
-        );
-
-}
-
-
-/* ESC */
-
-document.addEventListener(
-    "keydown",
-    function(event) {
-
-        if (
-            event.key === "Escape" &&
-            elements.characterModal &&
-            !elements.characterModal
-                .classList
-                .contains("hidden")
-        ) {
-
-            closeCharacterModal();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   33. BAŞLANGIÇ
+   BAŞLAT
 ========================================================= */
 
 initializeWorld();
 
-updateAllUI();
-
 startGame();
 
 
-console.log(
-    "================================="
-);
+/* =========================================================
+   TEST MESAJI
+========================================================= */
 
 console.log(
-    "REALM OF SHADOWS HAZIR"
+    "✅ SCRIPT TAMAMEN YÜKLENDİ"
 );
 
-console.log(
-    "Envanter:",
-    game.player.inventory
-);
 
 console.log(
-    "Görevler:",
-    game.quests
+    "🎒 Envanter butonu:",
+    inventoryButton
 );
 
-console.log(
-    "NPC:",
-    game.npcs
-);
 
 console.log(
-    "================================="
+    "🎒 Envanter modalı:",
+    inventoryModal
+);
+
+
+console.log(
+    "📦 Envanter alanı:",
+    inventoryPanel
 );
