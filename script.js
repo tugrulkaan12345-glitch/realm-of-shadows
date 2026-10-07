@@ -4017,7 +4017,7 @@ console.log(
 */
 
 const AI_SERVER_URL =
-    "https://realm-of-shadows-xxxx.onrender.com/api/story";
+    "https://realm-of-shadows-kjyu.onrender.com";
 
 
 
