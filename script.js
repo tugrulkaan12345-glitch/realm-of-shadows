@@ -1200,6 +1200,121 @@ function initializeWorld() {
 ========================================================= */
 
 initializeWorld();
+}
+
+
+/* =========================================================
+   OYUN DÜNYASINI HAZIRLA
+========================================================= */
+
+function initializeWorld() {
+
+    initializeNPCs();
+
+    initializeQuests();
+
+}
+
+
+/* =========================================================
+   OYUN DÜNYASINI BAŞLAT
+========================================================= */
+
+initializeWorld();
+
+/* =========================================================
+   BAŞLAT
+========================================================= */
+/* =========================================================
+   OYUN DURUMU KAYDETME
+========================================================= */
+
+function saveGame() {
+
+    localStorage.setItem(
+        "realmOfShadowsSave",
+        JSON.stringify(game)
+    );
+
+    addStoryMessage(
+        "Oyun kaydedildi.",
+        "dm"
+    );
+
+}
+
+
+/* =========================================================
+   OYUN DURUMU YÜKLEME
+========================================================= */
+
+function loadGame() {
+
+    const savedGame =
+        localStorage.getItem(
+            "realmOfShadowsSave"
+        );
+
+    if (!savedGame) {
+
+        addStoryMessage(
+            "Kaydedilmiş bir oyun bulunamadı.",
+            "dm"
+        );
+
+        return;
+
+    }
+
+
+    const loadedGame =
+        JSON.parse(savedGame);
+
+
+    Object.assign(
+        game.player,
+        loadedGame.player
+    );
+
+
+    Object.assign(
+        game.world,
+        loadedGame.world
+    );
+
+
+    Object.assign(
+        game.story,
+        loadedGame.story
+    );
+
+
+    updateWorldUI();
+
+
+    addStoryMessage(
+        "Kaydedilmiş macera geri yüklendi.",
+        "dm"
+    );
+
+}
+
+
+/* =========================================================
+   YENİ OYUN
+========================================================= */
+
+function newGame() {
+
+    localStorage.removeItem(
+        "realmOfShadowsSave"
+    );
+
+    location.reload();
+
+}
+
+startGame();
 
 /* =========================================================
    BAŞLAT
