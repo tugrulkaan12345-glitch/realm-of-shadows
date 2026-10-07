@@ -2,7 +2,6 @@
 <html lang="tr">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -13,14 +12,12 @@
     <title>Realm of Shadows</title>
 
     <link rel="stylesheet" href="style.css">
-
 </head>
 
 
 <body>
 
 <div id="game">
-
 
     <!-- =========================================
          ÜST MENÜ
@@ -32,7 +29,6 @@
             ⚔️ Realm of Shadows
         </div>
 
-
         <div class="top-buttons">
 
             <button
@@ -42,7 +38,6 @@
                 🧙 Karakter
             </button>
 
-
             <button
                 id="inventoryButton"
                 type="button"
@@ -50,14 +45,12 @@
                 🎒 Envanter
             </button>
 
-
             <button
                 id="saveButton"
                 type="button"
             >
                 💾 Kaydet
             </button>
-
 
             <button
                 id="loadButton"
@@ -71,9 +64,8 @@
     </header>
 
 
-
     <!-- =========================================
-         ANA OYUN ALANI
+         ANA OYUN
     ========================================== -->
 
     <main class="game-layout">
@@ -85,20 +77,15 @@
 
         <aside class="left-panel">
 
-
-            <!-- KARAKTER KARTI -->
-
             <section class="character-card">
 
                 <div class="avatar">
                     🧙
                 </div>
 
-
                 <h2 id="characterName">
                     Arden
                 </h2>
-
 
                 <p id="characterClass">
                     İnsan Savaşçı
@@ -106,9 +93,6 @@
 
             </section>
 
-
-
-            <!-- TEMEL BİLGİLER -->
 
             <section class="stats-card">
 
@@ -170,9 +154,6 @@
 
             </section>
 
-
-
-            <!-- ÖZELLİKLER -->
 
             <section class="stats-card">
 
@@ -263,7 +244,6 @@
         </aside>
 
 
-
         <!-- =====================================
              HİKAYE PANELİ
         ====================================== -->
@@ -279,13 +259,11 @@
                     📍 Konum
                 </div>
 
-
                 <strong id="location">
                     Blackmoor Köyü
                 </strong>
 
             </div>
-
 
 
             <!-- HİKAYE -->
@@ -295,10 +273,7 @@
                 class="story"
             >
 
-                <!-- JavaScript hikayeyi buraya ekleyecek -->
-
             </div>
-
 
 
             <!-- OYUNCU EYLEM ALANI -->
@@ -325,17 +300,16 @@
         </section>
 
 
-
         <!-- =====================================
              SAĞ PANEL
+             
+             ENVANTER BURADAN KALDIRILDI.
         ====================================== -->
 
         <aside class="right-panel">
 
 
-            <!-- =================================
-                 GÖREVLER
-            ================================== -->
+            <!-- GÖREVLER -->
 
             <section class="side-card">
 
@@ -344,7 +318,6 @@
                     <h3>
                         📜 Görevler
                     </h3>
-
 
                     <span
                         id="questCount"
@@ -370,10 +343,7 @@
             </section>
 
 
-
-            <!-- =================================
-                 ZAR
-            ================================== -->
+            <!-- ZAR -->
 
             <section class="side-card dice-card">
 
@@ -395,83 +365,16 @@
                     class="dice-button"
                     type="button"
                 >
-                    🎲 D20 At
+                    D20 At
                 </button>
 
             </section>
-
 
         </aside>
 
     </main>
 
 </div>
-
-
-
-<!-- =========================================
-     ENVANTER MODALI
-========================================== -->
-
-<div
-    id="inventoryModal"
-    class="modal hidden"
->
-
-    <div class="modal-content inventory-modal-content">
-
-
-        <!-- KAPAT -->
-
-        <button
-            id="closeInventory"
-            class="close"
-            type="button"
-            aria-label="Envanteri kapat"
-        >
-            ×
-        </button>
-
-
-
-        <!-- BAŞLIK -->
-
-        <div class="inventory-title">
-
-            <h2>
-                🎒 Envanter
-            </h2>
-
-
-            <span
-                id="inventoryCount"
-                class="item-count"
-            >
-                0
-            </span>
-
-        </div>
-
-
-
-        <!-- ENVANTER LİSTESİ -->
-
-        <div
-            id="inventory"
-            class="inventory-list"
-        >
-
-            <p class="empty">
-                Envanter boş.
-            </p>
-
-        </div>
-
-
-    </div>
-
-</div>
-
 
 
 <!-- =========================================
@@ -485,29 +388,22 @@
 
     <div class="modal-content">
 
-
-        <!-- KAPAT -->
-
         <button
             id="closeCharacter"
             class="close"
             type="button"
-            aria-label="Karakter penceresini kapat"
+            aria-label="Kapat"
         >
             ×
         </button>
 
-
-
-        <!-- BAŞLIK -->
 
         <h2>
             🧙 Karakter
         </h2>
 
 
-
-        <!-- KARAKTER BİLGİLERİ -->
+        <!-- KARAKTER BİLGİSİ -->
 
         <div
             id="characterInfo"
@@ -515,27 +411,19 @@
         ></div>
 
 
-
         <hr>
 
 
-
-        <!-- =================================
-             YENİ KARAKTER
-        ================================== -->
+        <!-- YENİ KARAKTER -->
 
         <h3>
             Yeni Karakter
         </h3>
 
 
-
-        <!-- İSİM -->
-
         <label for="nameInput">
             Karakter Adı
         </label>
-
 
         <input
             id="nameInput"
@@ -545,13 +433,9 @@
         >
 
 
-
-        <!-- IRK -->
-
         <label for="raceInput">
             Irk
         </label>
-
 
         <select id="raceInput">
 
@@ -578,13 +462,9 @@
         </select>
 
 
-
-        <!-- SINIF -->
-
         <label for="classInput">
             Sınıf
         </label>
-
 
         <select id="classInput">
 
@@ -611,13 +491,9 @@
         </select>
 
 
-
-        <!-- GEÇMİŞ -->
-
         <label for="backgroundInput">
             Geçmiş
         </label>
-
 
         <select id="backgroundInput">
 
@@ -644,9 +520,6 @@
         </select>
 
 
-
-        <!-- KARAKTER OLUŞTUR -->
-
         <button
             id="createCharacter"
             class="action-button"
@@ -655,19 +528,69 @@
             ⚔️ Karakteri Oluştur
         </button>
 
+    </div>
+
+</div>
+
+
+<!-- =========================================
+     ENVANTER MODALI
+========================================== -->
+
+<div
+    id="inventoryModal"
+    class="modal hidden"
+>
+
+    <div class="modal-content inventory-modal-content">
+
+        <button
+            id="closeInventory"
+            class="close"
+            type="button"
+            aria-label="Envanteri kapat"
+        >
+            ×
+        </button>
+
+
+        <div class="inventory-modal-header">
+
+            <h2>
+                🎒 Envanter
+            </h2>
+
+            <span
+                id="inventoryCount"
+                class="item-count"
+            >
+                0
+            </span>
+
+        </div>
+
+
+        <div
+            id="inventory"
+            class="inventory-list"
+        >
+
+            <p class="empty">
+                Envanter yükleniyor...
+            </p>
+
+        </div>
 
     </div>
 
 </div>
 
 
-
 <!-- =========================================
-     JAVASCRIPT
+     SCRIPT
 ========================================== -->
 
 <script src="script.js"></script>
-
 
 </body>
 
