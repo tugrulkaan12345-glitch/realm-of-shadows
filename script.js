@@ -29,15 +29,18 @@ const game = {
         maxHp: 20,
 
         stats: {
+
             strength: 16,
             dexterity: 12,
             constitution: 15,
             intelligence: 10,
             wisdom: 11,
             charisma: 10
+
         },
 
         inventory: [
+
             {
                 id: "rusty_sword",
                 name: "Paslı Kılıç",
@@ -45,18 +48,21 @@ const game = {
                 damage: "1d8",
                 quantity: 1
             },
+
             {
                 id: "potion",
                 name: "Şifa İksiri",
                 type: "consumable",
                 quantity: 2
             },
+
             {
                 id: "torch",
                 name: "Meşale",
                 type: "utility",
                 quantity: 3
             }
+
         ],
 
         gold: 25
@@ -76,22 +82,16 @@ const game = {
 
         danger: 1,
 
-        season: "Sonbahar",
-
-        description:
-            "Eski krallıkların yıkıntıları arasında karanlık güçlerin yeniden hareketlendiği bir dünya."
+        season: "Sonbahar"
 
     },
 
 
     npcs: [],
 
-
     quests: [],
 
-
     factions: [],
-
 
     locations: [],
 
@@ -141,40 +141,21 @@ const game = {
 };
 
 
-    world: {
-
-        location: "Blackmoor Köyü",
-
-        weather: "Yağmurlu",
-
-        time: "Gece",
-
-        danger: 1
-
-    },
-
-
-    story: {
-
-        chapter: 1,
-
-        actions: [],
-
-        events: [],
-
-        flags: {}
-
-    }
-
-};
-
-
 /* =========================================================
    SAYFA ELEMANLARI
 ========================================================= */
 
 const playerInput =
     document.getElementById("playerInput");
+
+const actionButton =
+    document.querySelector(".action-button");
+
+const saveButton =
+    document.getElementById("saveButton");
+
+const loadButton =
+    document.getElementById("loadButton");
 
 
 /* =========================================================
@@ -188,17 +169,15 @@ function addStoryMessage(text, type) {
 
     if (!story) {
 
-        console.error(
-            "Story alanı bulunamadı."
-        );
+        console.error("Story alanı bulunamadı.");
 
         return;
+
     }
 
 
     const message =
         document.createElement("div");
-
 
     message.classList.add(
         "story-message",
@@ -208,7 +187,6 @@ function addStoryMessage(text, type) {
 
     const author =
         document.createElement("div");
-
 
     author.classList.add(
         "message-author"
@@ -231,7 +209,6 @@ function addStoryMessage(text, type) {
     const content =
         document.createElement("p");
 
-
     content.innerHTML = text;
 
 
@@ -249,10 +226,37 @@ function addStoryMessage(text, type) {
 
 
 /* =========================================================
+   HTML GÜVENLİĞİ
+========================================================= */
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
+
+}
+
+
+/* =========================================================
    OYUNCU EYLEMİ
 ========================================================= */
 
 function playerAction() {
+
+    if (!playerInput) {
+
+        console.error(
+            "playerInput bulunamadı."
+        );
+
+        return;
+
+    }
+
 
     const text =
         playerInput.value.trim();
@@ -265,7 +269,7 @@ function playerAction() {
     }
 
 
-    /* Oyuncunun mesajını göster */
+    /* Oyuncunun mesajını ekrana yaz */
 
     addStoryMessage(
         escapeHTML(text),
@@ -273,7 +277,7 @@ function playerAction() {
     );
 
 
-    /* Geçmişe kaydet */
+    /* Hafızaya kaydet */
 
     game.story.actions.push({
 
@@ -291,12 +295,12 @@ function playerAction() {
     });
 
 
-    /* Input'u temizle */
+    /* Kutuyu temizle */
 
     playerInput.value = "";
 
 
-    /* Dungeon Master cevabı */
+    /* Dungeon Master */
 
     dungeonMaster(text);
 
@@ -316,9 +320,7 @@ function dungeonMaster(action) {
     let response;
 
 
-    /* -----------------------------------------
-       KUYU
-    ----------------------------------------- */
+    /* KUYU */
 
     if (
         lower.includes("kuyu") ||
@@ -329,26 +331,33 @@ function dungeonMaster(action) {
         game.story.flags.well = true;
 
 
-        response =
-            `
+        response = `
+
             Kuyunun taş kenarına yaklaşıyorsun.
+
+            <br><br>
+
             Yağmur taşların üzerinde küçük nehirler
             oluştururken aşağıdan belli belirsiz bir ses
             yükseliyor.
+
             <br><br>
+
             Önce bunun rüzgâr olduğunu düşünüyorsun.
+
             Fakat birkaç saniye sonra aynı fısıltıyı
             tekrar duyuyorsun.
+
             <br><br>
+
             <i>"Beni bul..."</i>
-            `;
+
+        `;
 
     }
 
 
-    /* -----------------------------------------
-       KİLİSE
-    ----------------------------------------- */
+    /* KİLİSE */
 
     else if (
         lower.includes("kilise") ||
@@ -358,53 +367,68 @@ function dungeonMaster(action) {
         game.story.flags.church = true;
 
 
-        response =
-            `
+        response = `
+
             Terk edilmiş kilisenin bulunduğu sokağa
             giriyorsun.
+
             <br><br>
+
             Kapının önündeki taş basamaklar yağmurdan
-            dolayı kaygan. Kapı tamamen kapalı değil;
-            aralıkta içeriden çok zayıf bir mum ışığı
-            süzülüyor.
+            dolayı kaygan.
+
             <br><br>
+
+            Kapı tamamen kapalı değil.
+
+            Aralıktan içeride çok zayıf bir mum ışığı
+            süzülüyor.
+
+            <br><br>
+
             İçeride biri varmış gibi hissediyorsun.
-            `;
+
+        `;
 
     }
 
 
-    /* -----------------------------------------
-       ORMAN
-    ----------------------------------------- */
+    /* ORMAN */
 
     else if (
         lower.includes("orman") ||
         lower.includes("ağaç")
     ) {
 
-        game.world.location =
-            "Blackmoor Ormanı";
+        changeLocation(
+            "Blackmoor Ormanı"
+        );
 
 
-        response =
-            `
+        response = `
+
             Köyün ışıkları arkanda kalıyor.
+
             <br><br>
+
             Ormana girdikçe yağmurun sesi azalıyor.
+
+            <br><br>
+
             Ağaçların arasında görüş mesafesi giderek
             düşüyor.
+
             <br><br>
+
             Bir süre sonra arkandan gelen ayak seslerini
             fark ediyorsun.
-            `;
+
+        `;
 
     }
 
 
-    /* -----------------------------------------
-       KÖYLÜ
-    ----------------------------------------- */
+    /* KÖYLÜ */
 
     else if (
         lower.includes("köylü") ||
@@ -412,30 +436,34 @@ function dungeonMaster(action) {
         lower.includes("kadın")
     ) {
 
-        response =
-            `
+        response = `
+
             Yakındaki köylülerden biri sana dikkatlice
             bakıyor.
+
             <br><br>
+
             Birkaç saniye boyunca hiçbir şey söylemiyor.
-            Sonra yaklaşarak sesini alçaltıyor.
+
             <br><br>
+
+            Sonra yaklaşarak sesini alçaltıyor.
+
+            <br><br>
+
             <i>"Bu gece burada fazla dolaşma."</i>
-            `;
+
+        `;
 
     }
 
 
-    /* -----------------------------------------
-       GENEL EYLEM
-    ----------------------------------------- */
+    /* GENEL */
 
     else {
 
         response =
-            `
-            ${randomGenericResponse()}
-            `;
+            randomGenericResponse();
 
     }
 
@@ -445,8 +473,6 @@ function dungeonMaster(action) {
         "dm"
     );
 
-
-    /* Dünya olayını kaydet */
 
     game.story.events.push({
 
@@ -477,34 +503,56 @@ function randomGenericResponse() {
     const responses = [
 
         `
+
         Etrafındaki dünya sessiz görünse de
         tamamen hareketsiz değil.
+
         <br><br>
+
         Uzaklardan bir ses geliyor.
+
         `,
 
+
         `
+
         Hamlen beklediğinden farklı bir etki yaratıyor.
+
         <br><br>
+
         Çevredeki insanların davranışlarında küçük
         bir değişiklik fark ediyorsun.
+
         `,
 
+
         `
+
         Birkaç saniye boyunca hiçbir şey olmuyor.
+
         <br><br>
+
         Sonra uzaktan metalik bir ses duyuluyor.
+
         `,
 
+
         `
+
         İçgüdülerin sana burada gözden kaçırdığın
         bir şey olduğunu söylüyor.
+
         `,
 
+
         `
+
         Hareketin çevrenin sessizliğini bozuyor.
+
         <br><br>
+
         Karanlığın içinden bir gölge geçiyor.
+
         `
 
     ];
@@ -523,7 +571,40 @@ function randomGenericResponse() {
 
 
 /* =========================================================
-   DÜNYA ARAYÜZİNİ GÜNCELLE
+   KONUM GÜNCELLE
+========================================================= */
+
+function changeLocation(location) {
+
+    const oldLocation =
+        game.world.location;
+
+
+    game.world.location =
+        location;
+
+
+    game.story.events.push({
+
+        type: "location_change",
+
+        from: oldLocation,
+
+        to: location,
+
+        timestamp:
+            new Date().toISOString()
+
+    });
+
+
+    updateWorldUI();
+
+}
+
+
+/* =========================================================
+   DÜNYA ARAYÜZİ
 ========================================================= */
 
 function updateWorldUI() {
@@ -545,150 +626,16 @@ function updateWorldUI() {
 
 
 /* =========================================================
-   HTML GÜVENLİĞİ
-========================================================= */
-
-function escapeHTML(text) {
-
-    const div =
-        document.createElement("div");
-
-    div.textContent =
-        text;
-
-    return div.innerHTML;
-
-}
-
-
-/* =========================================================
-   OYUNU BAŞLAT
-========================================================= */
-
-function startGame() {
-
-    console.log(
-        "Realm of Shadows başlatıldı."
-    );
-
-
-    console.log(
-        game
-    );
-
-
-    addStoryMessage(
-
-        `
-        Yağmur, Blackmoor Köyü'nün taş
-        sokaklarını dövüyor.
-        <br><br>
-
-        Köy meydanının ortasında eski bir kuyu
-        duruyor.
-        <br><br>
-
-        Terk edilmiş kilisenin kapısı ise rüzgâr
-        olmamasına rağmen yavaşça hareket ediyor.
-        <br><br>
-
-        Gece daha yeni başlıyor.
-        `,
-
-        "dm"
-
-    );
-
-}
-
-
-/* =========================================================
-   BUTON
-========================================================= */
-
-const actionButton =
-    document.querySelector(
-        ".action-button"
-    );
-
-
-if (actionButton) {
-
-    actionButton.addEventListener(
-        "click",
-        playerAction
-    );
-
-}
-
-
-/* =========================================================
-   ENTER TUŞU
-========================================================= */
-
-if (playerInput) {
-
-    playerInput.addEventListener(
-        "keydown",
-        function(event) {
-
-            if (
-                event.key === "Enter" &&
-                !event.shiftKey
-            ) {
-
-                event.preventDefault();
-
-                playerAction();
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   DÜNYA HAFIZASI
-========================================================= */
-
-function rememberEvent(type, data = {}) {
-
-    game.story.events.push({
-
-        type: type,
-
-        data: data,
-
-        location: game.world.location,
-
-        time: game.world.time,
-
-        timestamp: new Date().toISOString()
-
-    });
-
-}
-
-
-/* =========================================================
    NPC SİSTEMİ
 ========================================================= */
 
-function createNPC({
-    id,
-    name,
-    role,
-    personality,
-    location,
-    trust = 0,
-    secrets = [],
-    knowledge = []
-}) {
+function createNPC(data) {
 
     const existing =
-        game.npcs.find(npc => npc.id === id);
+        game.npcs.find(
+            npc => npc.id === data.id
+        );
+
 
     if (existing) {
 
@@ -696,27 +643,29 @@ function createNPC({
 
     }
 
+
     const npc = {
 
-        id: id,
+        id: data.id,
 
-        name: name,
+        name: data.name,
 
-        role: role,
+        role: data.role,
 
-        personality: personality,
+        personality: data.personality,
 
-        location: location,
+        location: data.location,
 
-        trust: trust,
+        trust: data.trust || 0,
 
-        secrets: secrets,
+        secrets: data.secrets || [],
 
-        knowledge: knowledge,
+        knowledge: data.knowledge || [],
 
         relationshipHistory: []
 
     };
+
 
     game.npcs.push(npc);
 
@@ -726,52 +675,7 @@ function createNPC({
 
 
 /* =========================================================
-   NPC İLİŞKİSİ
-========================================================= */
-
-function changeNPCTrust(npcId, amount, reason = "") {
-
-    const npc =
-        game.npcs.find(n => n.id === npcId);
-
-    if (!npc) {
-
-        console.warn(
-            "NPC bulunamadı:",
-            npcId
-        );
-
-        return;
-
-    }
-
-    npc.trust += amount;
-
-    npc.relationshipHistory.push({
-
-        amount: amount,
-
-        reason: reason,
-
-        timestamp:
-            new Date().toISOString()
-
-    });
-
-    rememberEvent(
-        "npc_relationship",
-        {
-            npcId: npcId,
-            amount: amount,
-            reason: reason
-        }
-    );
-
-}
-
-
-/* =========================================================
-   BAŞLANGIÇ NPC'LERİ
+   NPC'LER
 ========================================================= */
 
 function initializeNPCs() {
@@ -866,18 +770,13 @@ function initializeNPCs() {
    GÖREV SİSTEMİ
 ========================================================= */
 
-function createQuest({
-    id,
-    title,
-    description,
-    objectives = [],
-    reward = 0
-}) {
+function createQuest(data) {
 
     const existing =
         game.quests.find(
-            quest => quest.id === id
+            quest => quest.id === data.id
         );
+
 
     if (existing) {
 
@@ -885,27 +784,30 @@ function createQuest({
 
     }
 
+
     const quest = {
 
-        id: id,
+        id: data.id,
 
-        title: title,
+        title: data.title,
 
-        description: description,
+        description: data.description,
 
-        objectives: objectives.map(
-            objective => ({
+        objectives:
+            (data.objectives || []).map(
+                objective => ({
 
-                id: objective.id,
+                    id: objective.id,
 
-                text: objective.text,
+                    text: objective.text,
 
-                completed: false
+                    completed: false
 
-            })
-        ),
+                })
+            ),
 
-        reward: reward,
+        reward:
+            data.reward || 0,
 
         status: "active",
 
@@ -913,6 +815,7 @@ function createQuest({
             new Date().toISOString()
 
     };
+
 
     game.quests.push(quest);
 
@@ -922,7 +825,7 @@ function createQuest({
 
 
 /* =========================================================
-   BAŞLANGIÇ GÖREVLERİ
+   GÖREVLER
 ========================================================= */
 
 function initializeQuests() {
@@ -940,16 +843,12 @@ function initializeQuests() {
 
             {
                 id: "visit_well",
-
-                text:
-                    "Köy kuyusunu araştır."
+                text: "Köy kuyusunu araştır."
             },
 
             {
                 id: "learn_secret",
-
-                text:
-                    "Kuyunun sırrı hakkında bilgi edin."
+                text: "Kuyunun sırrı hakkında bilgi edin."
             }
 
         ],
@@ -972,16 +871,12 @@ function initializeQuests() {
 
             {
                 id: "talk_healer",
-
-                text:
-                    "Mara ile konuş."
+                text: "Mara ile konuş."
             },
 
             {
                 id: "find_clue",
-
-                text:
-                    "Kaybolan kişiye ait bir ipucu bul."
+                text: "Kaybolan kişiye ait bir ipucu bul."
             }
 
         ],
@@ -994,196 +889,7 @@ function initializeQuests() {
 
 
 /* =========================================================
-   GÖREV İLERLETME
-========================================================= */
-
-function completeObjective(
-    questId,
-    objectiveId
-) {
-
-    const quest =
-        game.quests.find(
-            q => q.id === questId
-        );
-
-    if (!quest) return;
-
-    const objective =
-        quest.objectives.find(
-            o => o.id === objectiveId
-        );
-
-    if (!objective) return;
-
-    if (objective.completed) return;
-
-    objective.completed = true;
-
-    rememberEvent(
-        "quest_progress",
-        {
-            questId: questId,
-            objectiveId: objectiveId
-        }
-    );
-
-    checkQuestCompletion(quest);
-
-}
-
-
-function checkQuestCompletion(quest) {
-
-    const completed =
-        quest.objectives.every(
-            objective =>
-                objective.completed
-        );
-
-    if (!completed) return;
-
-    if (quest.status === "completed") return;
-
-    quest.status = "completed";
-
-    game.player.xp += quest.reward;
-
-    addStoryMessage(
-
-        `
-        <b>📜 Görev tamamlandı!</b>
-        <br><br>
-        ${quest.title}
-        <br>
-        <b>+${quest.reward} XP</b>
-        `,
-
-        "dm"
-
-    );
-
-}
-
-
-/* =========================================================
-   DÜNYA BAYRAKLARI
-========================================================= */
-
-function setWorldFlag(
-    flag,
-    value = true
-) {
-
-    game.story.flags[flag] = value;
-
-    rememberEvent(
-        "world_flag",
-        {
-            flag: flag,
-            value: value
-        }
-    );
-
-}
-
-
-function getWorldFlag(flag) {
-
-    return game.story.flags[flag] || false;
-
-}
-
-
-/* =========================================================
-   KONUM DEĞİŞTİRME
-========================================================= */
-
-function changeLocation(location) {
-
-    if (
-        game.world.location === location
-    ) {
-
-        return;
-
-    }
-
-    const previousLocation =
-        game.world.location;
-
-    game.world.location =
-        location;
-
-    rememberEvent(
-        "location_change",
-        {
-            from: previousLocation,
-            to: location
-        }
-    );
-
-    updateWorldUI();
-
-}
-
-
-/* =========================================================
-   OYUNCUNUN DÜNYAYA ETKİSİ
-========================================================= */
-
-function recordPlayerAction(
-    action
-) {
-
-    game.story.actions.push({
-
-        text: action,
-
-        location:
-            game.world.location,
-
-        time:
-            game.world.time,
-
-        worldDanger:
-            game.world.danger,
-
-        timestamp:
-            new Date().toISOString()
-
-    });
-
-}
-
-
-/* =========================================================
-   DÜNYA HAFIZASINDAN SON OLAYLARI AL
-========================================================= */
-
-function getRecentEvents(limit = 10) {
-
-    return game.story.events
-        .slice(-limit);
-
-}
-
-
-/* =========================================================
-   NPC HAFIZASINDAN BİLGİ AL
-========================================================= */
-
-function getNPC(npcId) {
-
-    return game.npcs.find(
-        npc => npc.id === npcId
-    );
-
-}
-
-
-/* =========================================================
-   OYUN DÜNYASINI HAZIRLA
+   DÜNYAYI HAZIRLA
 ========================================================= */
 
 function initializeWorld() {
@@ -1196,37 +902,7 @@ function initializeWorld() {
 
 
 /* =========================================================
-   OYUN DÜNYASINI BAŞLAT
-========================================================= */
-
-initializeWorld();
-}
-
-
-/* =========================================================
-   OYUN DÜNYASINI HAZIRLA
-========================================================= */
-
-function initializeWorld() {
-
-    initializeNPCs();
-
-    initializeQuests();
-
-}
-
-
-/* =========================================================
-   OYUN DÜNYASINI BAŞLAT
-========================================================= */
-
-initializeWorld();
-
-/* =========================================================
-   BAŞLAT
-========================================================= */
-/* =========================================================
-   OYUN DURUMU KAYDETME
+   KAYDET
 ========================================================= */
 
 function saveGame() {
@@ -1235,6 +911,7 @@ function saveGame() {
         "realmOfShadowsSave",
         JSON.stringify(game)
     );
+
 
     addStoryMessage(
         "Oyun kaydedildi.",
@@ -1245,7 +922,7 @@ function saveGame() {
 
 
 /* =========================================================
-   OYUN DURUMU YÜKLEME
+   YÜKLE
 ========================================================= */
 
 function loadGame() {
@@ -1254,6 +931,7 @@ function loadGame() {
         localStorage.getItem(
             "realmOfShadowsSave"
         );
+
 
     if (!savedGame) {
 
@@ -1289,6 +967,13 @@ function loadGame() {
     );
 
 
+    game.npcs =
+        loadedGame.npcs || [];
+
+    game.quests =
+        loadedGame.quests || [];
+
+
     updateWorldUI();
 
 
@@ -1310,24 +995,41 @@ function newGame() {
         "realmOfShadowsSave"
     );
 
+
     location.reload();
 
 }
 
 
 /* =========================================================
-   OYUNCU EYLEM BUTONU
+   BUTONLAR
 ========================================================= */
-
-const actionButton =
-    document.querySelector(".action-button");
-
 
 if (actionButton) {
 
     actionButton.addEventListener(
         "click",
         playerAction
+    );
+
+}
+
+
+if (saveButton) {
+
+    saveButton.addEventListener(
+        "click",
+        saveGame
+    );
+
+}
+
+
+if (loadButton) {
+
+    loadButton.addEventListener(
+        "click",
+        loadGame
     );
 
 }
@@ -1361,43 +1063,53 @@ if (playerInput) {
 
 
 /* =========================================================
-   KAYDET
-========================================================= */
-
-const saveButton =
-    document.getElementById("saveButton");
-
-
-if (saveButton) {
-
-    saveButton.addEventListener(
-        "click",
-        saveGame
-    );
-
-}
-
-
-/* =========================================================
-   YÜKLE
-========================================================= */
-
-const loadButton =
-    document.getElementById("loadButton");
-
-
-if (loadButton) {
-
-    loadButton.addEventListener(
-        "click",
-        loadGame
-    );
-
-}
-
-
-/* =========================================================
    OYUNU BAŞLAT
 ========================================================= */
+
+function startGame() {
+
+    console.log(
+        "Realm of Shadows başlatıldı."
+    );
+
+
+    console.log(game);
+
+
+    addStoryMessage(
+
+        `
+
+        Yağmur, Blackmoor Köyü'nün taş
+        sokaklarını dövüyor.
+
+        <br><br>
+
+        Köy meydanının ortasında eski bir kuyu
+        duruyor.
+
+        <br><br>
+
+        Terk edilmiş kilisenin kapısı ise rüzgâr
+        olmamasına rağmen yavaşça hareket ediyor.
+
+        <br><br>
+
+        Gece daha yeni başlıyor.
+
+        `,
+
+        "dm"
+
+    );
+
+}
+
+
+/* =========================================================
+   BAŞLANGIÇ
+========================================================= */
+
+initializeWorld();
 
 startGame();
