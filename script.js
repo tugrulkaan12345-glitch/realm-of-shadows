@@ -1715,5 +1715,137 @@ if (testCharacterButton && testCharacterModal) {
     });
 
 }
+/* =========================================================
+   ENVANTER SİSTEMİ
+========================================================= */
+
+const inventoryButton =
+    document.getElementById("inventoryButton");
+
+const inventoryPanel =
+    document.getElementById("inventory");
+
+
+/* =========================================================
+   ENVANTERİ GÖSTER
+========================================================= */
+
+function updateInventoryUI() {
+
+    if (!inventoryPanel) {
+        console.error("Envanter alanı bulunamadı.");
+        return;
+    }
+
+
+    inventoryPanel.innerHTML = "";
+
+
+    if (
+        !game.player.inventory ||
+        game.player.inventory.length === 0
+    ) {
+
+        inventoryPanel.innerHTML = `
+            <p class="empty">
+                Envanter boş.
+            </p>
+        `;
+
+        return;
+
+    }
+
+
+    game.player.inventory.forEach(function(item) {
+
+        const itemElement =
+            document.createElement("div");
+
+        itemElement.classList.add(
+            "inventory-item"
+        );
+
+
+        let icon = "📦";
+
+
+        if (item.type === "weapon") {
+            icon = "⚔️";
+        }
+
+        else if (item.type === "consumable") {
+            icon = "🧪";
+        }
+
+        else if (item.type === "utility") {
+            icon = "🔥";
+        }
+
+
+        itemElement.innerHTML = `
+
+            <div class="inventory-item-icon">
+                ${icon}
+            </div>
+
+            <div class="inventory-item-info">
+
+                <strong>
+                    ${escapeHTML(item.name)}
+                </strong>
+
+                <span>
+                    Adet: ${item.quantity}
+                </span>
+
+                ${
+                    item.damage
+                    ? `<span>Hasar: ${item.damage}</span>`
+                    : ""
+                }
+
+            </div>
+
+        `;
+
+
+        inventoryPanel.appendChild(
+            itemElement
+        );
+
+    });
+
+}
+
+
+/* =========================================================
+   ENVANTER BUTONU
+========================================================= */
+
+if (inventoryButton) {
+
+    inventoryButton.addEventListener(
+        "click",
+        function() {
+
+            console.log(
+                "ENVANTER BUTONUNA BASILDI"
+            );
+
+            updateInventoryUI();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   OYUN BAŞLANGICINDA ENVANTERİ YÜKLE
+========================================================= */
+
+updateInventoryUI();
+
 
 
