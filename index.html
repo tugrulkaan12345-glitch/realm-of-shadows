@@ -2,6 +2,7 @@
 <html lang="tr">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -12,6 +13,7 @@
     <title>Realm of Shadows</title>
 
     <link rel="stylesheet" href="style.css">
+
 </head>
 
 
@@ -29,6 +31,7 @@
             ⚔️ Realm of Shadows
         </div>
 
+
         <div class="top-buttons">
 
             <button
@@ -38,6 +41,7 @@
                 🧙 Karakter
             </button>
 
+
             <button
                 id="inventoryButton"
                 type="button"
@@ -45,12 +49,14 @@
                 🎒 Envanter
             </button>
 
+
             <button
                 id="saveButton"
                 type="button"
             >
                 💾 Kaydet
             </button>
+
 
             <button
                 id="loadButton"
@@ -65,7 +71,7 @@
 
 
     <!-- =========================================
-         ANA OYUN
+         ANA OYUN ALANI
     ========================================== -->
 
     <main class="game-layout">
@@ -77,15 +83,18 @@
 
         <aside class="left-panel">
 
+
             <section class="character-card">
 
                 <div class="avatar">
                     🧙
                 </div>
 
+
                 <h2 id="characterName">
                     Arden
                 </h2>
+
 
                 <p id="characterClass">
                     İnsan Savaşçı
@@ -93,6 +102,8 @@
 
             </section>
 
+
+            <!-- TEMEL BİLGİLER -->
 
             <section class="stats-card">
 
@@ -154,6 +165,8 @@
 
             </section>
 
+
+            <!-- ÖZELLİKLER -->
 
             <section class="stats-card">
 
@@ -259,6 +272,7 @@
                     📍 Konum
                 </div>
 
+
                 <strong id="location">
                     Blackmoor Köyü
                 </strong>
@@ -272,6 +286,8 @@
                 id="story"
                 class="story"
             >
+
+                <!-- JavaScript hikayeyi buraya ekler -->
 
             </div>
 
@@ -302,14 +318,14 @@
 
         <!-- =====================================
              SAĞ PANEL
-             
-             ENVANTER BURADAN KALDIRILDI.
         ====================================== -->
 
         <aside class="right-panel">
 
 
-            <!-- GÖREVLER -->
+            <!-- =================================
+                 GÖREVLER
+            ================================== -->
 
             <section class="side-card">
 
@@ -318,6 +334,7 @@
                     <h3>
                         📜 Görevler
                     </h3>
+
 
                     <span
                         id="questCount"
@@ -343,7 +360,9 @@
             </section>
 
 
-            <!-- ZAR -->
+            <!-- =================================
+                 ZAR
+            ================================== -->
 
             <section class="side-card dice-card">
 
@@ -365,7 +384,7 @@
                     class="dice-button"
                     type="button"
                 >
-                    D20 At
+                    🎲 D20 At
                 </button>
 
             </section>
@@ -403,7 +422,7 @@
         </h2>
 
 
-        <!-- KARAKTER BİLGİSİ -->
+        <!-- KARAKTER BİLGİLERİ -->
 
         <div
             id="characterInfo"
@@ -425,6 +444,7 @@
             Karakter Adı
         </label>
 
+
         <input
             id="nameInput"
             type="text"
@@ -436,6 +456,7 @@
         <label for="raceInput">
             Irk
         </label>
+
 
         <select id="raceInput">
 
@@ -466,6 +487,7 @@
             Sınıf
         </label>
 
+
         <select id="classInput">
 
             <option value="Savaşçı">
@@ -494,6 +516,7 @@
         <label for="backgroundInput">
             Geçmiş
         </label>
+
 
         <select id="backgroundInput">
 
@@ -542,7 +565,7 @@
     class="modal hidden"
 >
 
-    <div class="modal-content inventory-modal-content">
+    <div class="modal-content inventory-modal">
 
         <button
             id="closeInventory"
@@ -554,11 +577,12 @@
         </button>
 
 
-        <div class="inventory-modal-header">
+        <div class="modal-title">
 
             <h2>
                 🎒 Envanter
             </h2>
+
 
             <span
                 id="inventoryCount"
@@ -587,7 +611,7 @@
 
 
 <!-- =========================================
-     SCRIPT
+     JAVASCRIPT
 ========================================== -->
 
 <script src="script.js"></script>
