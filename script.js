@@ -1,8 +1,8 @@
 /* =========================================================
    REALM OF SHADOWS
-   TAM OYUN MOTORU
-   ENVANTER + KARAKTER + GÖREV + ZAR + SAVAŞ
-   DOĞAL DİL SAVAŞ KOMUTLARI
+   TEK PARÇA OYUN MOTORU
+   SAVAŞ + ENVANTER + KUŞANMA + GÖREV + KARAKTER
+   + KAYDET/YÜKLE + ZAR + SEVİYE SİSTEMİ
 ========================================================= */
 
 
@@ -131,9 +131,7 @@ const game = {
 
         enemy: null,
 
-        round: 0,
-
-        defending: false
+        round: 0
 
     },
 
@@ -206,6 +204,21 @@ const rollButton =
 const diceResult =
     document.getElementById("diceResult");
 
+const nameInput =
+    document.getElementById("nameInput");
+
+const raceInput =
+    document.getElementById("raceInput");
+
+const classInput =
+    document.getElementById("classInput");
+
+const backgroundInput =
+    document.getElementById("backgroundInput");
+
+const createCharacterButton =
+    document.getElementById("createCharacter");
+
 
 /* =========================================================
    HTML GÜVENLİĞİ
@@ -228,29 +241,31 @@ function escapeHTML(text) {
    HİKAYE MESAJI
 ========================================================= */
 
-function addStoryMessage(text, type = "dm") {
+function addStoryMessage(
+    text,
+    type = "dm"
+) {
 
     const story =
         document.getElementById("story");
 
-    if (!story) return;
+    if (!story) {
+        return;
+    }
 
 
     const message =
         document.createElement("div");
 
-    message.classList.add(
-        "story-message",
-        type
-    );
+    message.className =
+        `story-message ${type}`;
 
 
     const author =
         document.createElement("div");
 
-    author.classList.add(
-        "message-author"
-    );
+    author.className =
+        "message-author";
 
 
     author.textContent =
@@ -280,47 +295,23 @@ function addStoryMessage(text, type = "dm") {
 
 
 /* =========================================================
-   NORMALLEŞTİRME
-========================================================= */
-
-function normalizeText(text) {
-
-    return String(text)
-        .toLocaleLowerCase("tr-TR")
-        .replace(/[.,!?;:"'()]/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
-
-}
-
-
-/* =========================================================
-   KOMUT İÇERİYOR MU?
-========================================================= */
-
-function containsAny(text, words) {
-
-    return words.some(
-        word => text.includes(word)
-    );
-
-}
-
-
-/* =========================================================
    OYUNCU EYLEMİ
 ========================================================= */
 
 function playerAction() {
 
-    if (!playerInput) return;
+    if (!playerInput) {
+        return;
+    }
 
 
     const text =
         playerInput.value.trim();
 
 
-    if (!text) return;
+    if (!text) {
+        return;
+    }
 
 
     addStoryMessage(
@@ -331,13 +322,10 @@ function playerAction() {
 
     game.story.actions.push({
 
-        text,
+        text: text,
 
         location:
             game.world.location,
-
-        time:
-            game.world.time,
 
         timestamp:
             new Date().toISOString()
@@ -348,6 +336,10 @@ function playerAction() {
     playerInput.value = "";
 
 
+    /* =========================================
+       SAVAŞ AKTİFSE
+    ========================================= */
+
     if (game.combat.active) {
 
         handleCombatAction(text);
@@ -356,6 +348,10 @@ function playerAction() {
 
     }
 
+
+    /* =========================================
+       NORMAL OYUN
+    ========================================= */
 
     dungeonMaster(text);
 
@@ -372,27 +368,16 @@ function dungeonMaster(action) {
         normalizeText(action);
 
 
-    let response;
-
-
-    /* =====================================================
-       AÇIK SALDIRI KOMUTU
-    ===================================================== */
+    /* =========================================
+       SALDIRI
+    ========================================= */
 
     if (
-        containsAny(lower, [
-
-            "saldır",
-            "saldir",
-            "vur",
-            "kılıçla saldır",
-            "kilicla saldir",
-            "düşmana saldır",
-            "dusmana saldir",
-            "yaratığa saldır",
-            "yaratiga saldir"
-
-        ])
+        lower.includes("saldir") ||
+        lower.includes("savas") ||
+        lower.includes("düsman") ||
+        lower.includes("dusman") ||
+        lower.includes("yaratik")
     ) {
 
         startCombat("shadow_wolf");
@@ -402,23 +387,19 @@ function dungeonMaster(action) {
     }
 
 
-    /* =====================================================
+    /* =========================================
        KUYU
-    ===================================================== */
+    ========================================= */
 
     if (
-        containsAny(lower, [
-            "kuyu",
-            "kuyuya git",
-            "kuyuyu araştır",
-            "kuyuyu arastir",
-            "aşağı bak",
-            "asagi bak",
-            "dinliyorum"
-        ])
+        lower.includes("kuyu") ||
+        lower.includes("asagi") ||
+        lower.includes("dinliyorum")
     ) {
 
-        game.story.flags.well = true;
+        game.story.flags.well =
+            true;
+
 
         completeQuestObjective(
             "blackmoor_whispers",
@@ -426,8 +407,9 @@ function dungeonMaster(action) {
         );
 
 
-        response = `
+        addStoryMessage(
 
+            `
             Kuyunun taş kenarına yaklaşıyorsun.
 
             <br><br>
@@ -444,36 +426,34 @@ function dungeonMaster(action) {
             <br><br>
 
             <i>"Beni bul..."</i>
+            `,
 
-        `;
+            "dm"
+
+        );
+
+
+        return;
 
     }
 
 
-    /* =====================================================
+    /* =========================================
        KİLİSE
-    ===================================================== */
+    ========================================= */
 
-    else if (
-        containsAny(lower, [
-            "kilise",
-            "kiliseye git",
-            "kiliseye gir"
-        ])
+    if (
+        lower.includes("kilise")
     ) {
 
-        game.story.flags.church = true;
+        game.story.flags.church =
+            true;
 
 
-        response = `
+        addStoryMessage(
 
-            Terk edilmiş kilisenin bulunduğu sokağa
-            giriyorsun.
-
-            <br><br>
-
-            Kapının önündeki taş basamaklar yağmurdan
-            dolayı kaygan.
+            `
+            Terk edilmiş kiliseye doğru ilerliyorsun.
 
             <br><br>
 
@@ -481,26 +461,30 @@ function dungeonMaster(action) {
 
             <br><br>
 
-            İçeriden çok zayıf bir mum ışığı
-            süzülüyor.
+            İçeriden zayıf bir mum ışığı geliyor.
 
-        `;
+            <br><br>
+
+            Fakat içeride kimse görünmüyor.
+            `,
+
+            "dm"
+
+        );
+
+
+        return;
 
     }
 
 
-    /* =====================================================
+    /* =========================================
        ORMAN
-    ===================================================== */
+    ========================================= */
 
-    else if (
-        containsAny(lower, [
-            "orman",
-            "ormana git",
-            "ağaç",
-            "ağaçlara git",
-            "agac"
-        ])
+    if (
+        lower.includes("orman") ||
+        lower.includes("agac")
     ) {
 
         changeLocation(
@@ -508,39 +492,31 @@ function dungeonMaster(action) {
         );
 
 
-        response = `
+        addStoryMessage(
 
+            `
             Köyün ışıkları arkanda kalıyor.
 
             <br><br>
 
-            Ormana girdikçe yağmurun sesi azalıyor.
+            Ağaçların arasına girdikçe karanlık
+            yoğunlaşıyor.
 
             <br><br>
 
-            Ağaçların arasında görüş mesafesi
-            giderek düşüyor.
+            Arkandan bir hırıltı duyuluyor.
 
             <br><br>
 
-            Bir süre sonra arkandan gelen
-            ayak seslerini fark ediyorsun.
+            Karanlığın içinden sarı gözler beliriyor.
 
             <br><br>
 
-            Karanlığın içinden bir çift sarı göz
-            beliriyor.
+            <b>Gölge Kurdu!</b>
+            `,
 
-            <br><br>
-
-            <b>Gölge Kurdu</b> ortaya çıkıyor!
-
-        `;
-
-
-        addStoryMessage(
-            response,
             "dm"
+
         );
 
 
@@ -555,75 +531,69 @@ function dungeonMaster(action) {
     }
 
 
-    /* =====================================================
+    /* =========================================
        KÖYLÜ
-    ===================================================== */
+    ========================================= */
 
-    else if (
-        containsAny(lower, [
-            "köylü",
-            "koylu",
-            "adam",
-            "kadın",
-            "kadin",
-            "mara",
-            "jonas",
-            "aldric"
-        ])
+    if (
+        lower.includes("koylu") ||
+        lower.includes("adam") ||
+        lower.includes("kadin")
     ) {
 
-        response = `
+        addStoryMessage(
 
-            Yakındaki köylülerden biri sana
-            dikkatlice bakıyor.
-
-            <br><br>
-
-            Sonra yaklaşarak sesini alçaltıyor.
+            `
+            Yakındaki köylülerden biri sana dikkatlice
+            bakıyor.
 
             <br><br>
 
-            <i>"Bu gece burada fazla dolaşma."</i>
+            Sonra sesini alçaltıyor.
 
-        `;
+            <br><br>
+
+            <i>
+            "Bu gece burada fazla dolaşma."
+            </i>
+            `,
+
+            "dm"
+
+        );
+
+
+        return;
 
     }
 
 
-    /* =====================================================
+    /* =========================================
        GENEL
-    ===================================================== */
-
-    else {
-
-        response =
-            randomGenericResponse();
-
-    }
-
+    ========================================= */
 
     addStoryMessage(
-        response,
+        randomGenericResponse(),
         "dm"
     );
 
-
-    game.story.events.push({
-
-        action,
-
-        response,
-
-        location:
-            game.world.location,
-
-        timestamp:
-            new Date().toISOString()
-
-    });
+}
 
 
-    updateAllUI();
+/* =========================================================
+   NORMALİZE
+========================================================= */
+
+function normalizeText(text) {
+
+    return String(text)
+        .toLowerCase()
+        .replaceAll("ı", "i")
+        .replaceAll("ğ", "g")
+        .replaceAll("ü", "u")
+        .replaceAll("ş", "s")
+        .replaceAll("ö", "o")
+        .replaceAll("ç", "c");
 
 }
 
@@ -646,12 +616,12 @@ function randomGenericResponse() {
         `,
 
         `
-        Hamlen beklediğinden farklı bir etki yaratıyor.
+        Hamlen çevrede küçük bir değişikliğe
+        neden oluyor.
 
         <br><br>
 
-        Çevredeki insanların davranışlarında küçük
-        bir değişiklik fark ediyorsun.
+        Fakat ne olduğunu henüz anlayamıyorsun.
         `,
 
         `
@@ -663,20 +633,16 @@ function randomGenericResponse() {
         `,
 
         `
-        İçgüdülerin sana burada gözden kaçırdığın
+        İçgüdülerin burada gözden kaçırdığın
         bir şey olduğunu söylüyor.
-
-        <br><br>
-
-        Karanlığın içinde bir hareket var.
         `,
 
         `
-        Hareketin çevrenin sessizliğini bozuyor.
+        Karanlığın içinden bir gölge geçiyor.
 
         <br><br>
 
-        Karanlığın içinden bir gölge geçiyor.
+        Fakat ne olduğunu göremiyorsun.
         `
 
     ];
@@ -707,9 +673,8 @@ function changeLocation(location) {
 
 
     if (
-        !game.story.discoveredLocations.includes(
-            location
-        )
+        !game.story.discoveredLocations
+            .includes(location)
     ) {
 
         game.story.discoveredLocations.push(
@@ -745,7 +710,9 @@ function changeLocation(location) {
 function updateWorldUI() {
 
     const location =
-        document.getElementById("location");
+        document.getElementById(
+            "location"
+        );
 
 
     if (location) {
@@ -777,7 +744,9 @@ function getInventoryItem(id) {
 
 function updateInventoryUI() {
 
-    if (!inventoryPanel) return;
+    if (!inventoryPanel) {
+        return;
+    }
 
 
     inventoryPanel.innerHTML = "";
@@ -792,7 +761,8 @@ function updateInventoryUI() {
         inventoryCount.textContent =
             inventory.reduce(
                 (total, item) =>
-                    total + (item.quantity || 0),
+                    total +
+                    Number(item.quantity || 0),
                 0
             );
 
@@ -816,37 +786,32 @@ function updateInventoryUI() {
 
     inventory.forEach(item => {
 
-        const itemElement =
+        const element =
             document.createElement("div");
 
 
-        itemElement.className =
+        element.className =
             "inventory-item";
 
 
-        let icon = "📦";
+        let icon =
+            "📦";
 
 
         if (item.type === "weapon") {
-
             icon = "⚔️";
-
         }
 
-        else if (item.type === "consumable") {
-
+        if (item.type === "consumable") {
             icon = "🧪";
-
         }
 
-        else if (item.type === "utility") {
-
+        if (item.type === "utility") {
             icon = "🔥";
-
         }
 
 
-        itemElement.innerHTML = `
+        element.innerHTML = `
 
             <div class="inventory-item-icon">
                 ${icon}
@@ -859,23 +824,28 @@ function updateInventoryUI() {
                 </strong>
 
                 <span>
-                    Adet: ${item.quantity}
+                    Adet:
+                    ${item.quantity}
                 </span>
 
                 ${
                     item.damage
-                    ? `<span>
-                        Hasar:
-                        ${escapeHTML(item.damage)}
-                       </span>`
+                    ? `
+                        <span>
+                            Hasar:
+                            ${escapeHTML(item.damage)}
+                        </span>
+                    `
                     : ""
                 }
 
                 ${
                     item.equipped
-                    ? `<span class="equipped">
-                        ⚔️ Kuşanılmış
-                       </span>`
+                    ? `
+                        <span class="equipped">
+                            ⚔️ Kuşanılmış
+                        </span>
+                    `
                     : ""
                 }
 
@@ -893,7 +863,7 @@ function updateInventoryUI() {
 
 
         const button =
-            itemElement.querySelector(
+            element.querySelector(
                 ".inventory-use-button"
             );
 
@@ -902,14 +872,20 @@ function updateInventoryUI() {
 
             button.addEventListener(
                 "click",
-                () => useInventoryItem(item.id)
+                () => {
+
+                    useInventoryItem(
+                        item.id
+                    );
+
+                }
             );
 
         }
 
 
         inventoryPanel.appendChild(
-            itemElement
+            element
         );
 
     });
@@ -954,7 +930,7 @@ function getInventoryActionText(item) {
 
 
 /* =========================================================
-   EŞYA KULLAN
+   ENVANTER EŞYASI KULLAN
 ========================================================= */
 
 function useInventoryItem(id) {
@@ -963,7 +939,9 @@ function useInventoryItem(id) {
         getInventoryItem(id);
 
 
-    if (!item) return;
+    if (!item) {
+        return;
+    }
 
 
     if (item.type === "weapon") {
@@ -988,6 +966,8 @@ function useInventoryItem(id) {
 
         useTorch(item);
 
+        return;
+
     }
 
 }
@@ -1004,13 +984,17 @@ function toggleWeapon(item) {
         item.equipped =
             false;
 
+
         game.player.equippedWeapon =
             null;
 
 
         addStoryMessage(
-            `⚔️ ${escapeHTML(item.name)} kuşandan çıkarıldı.`,
+
+            `⚔️ <b>${escapeHTML(item.name)}</b> kuşandan çıkarıldı.`,
+
             "dm"
+
         );
 
     }
@@ -1021,7 +1005,8 @@ function toggleWeapon(item) {
             inventoryItem => {
 
                 if (
-                    inventoryItem.type === "weapon"
+                    inventoryItem.type ===
+                    "weapon"
                 ) {
 
                     inventoryItem.equipped =
@@ -1042,14 +1027,19 @@ function toggleWeapon(item) {
 
 
         addStoryMessage(
+
             `⚔️ <b>${escapeHTML(item.name)}</b> kuşandın.`,
+
             "dm"
+
         );
 
     }
 
 
     updateInventoryUI();
+
+    updateCharacterUI();
 
 }
 
@@ -1087,23 +1077,23 @@ function usePotion(item) {
     }
 
 
-    const healAmount =
-        item.heal || 10;
-
-
-    const oldHP =
+    const oldHp =
         game.player.hp;
+
+
+    const heal =
+        Number(item.heal || 10);
 
 
     game.player.hp =
         Math.min(
             game.player.maxHp,
-            game.player.hp + healAmount
+            game.player.hp + heal
         );
 
 
     const actualHeal =
-        game.player.hp - oldHP;
+        game.player.hp - oldHp;
 
 
     item.quantity--;
@@ -1112,12 +1102,11 @@ function usePotion(item) {
     addStoryMessage(
 
         `
-
         🧪 <b>Şifa İksiri kullandın.</b>
 
         <br><br>
 
-        ❤️ <b>${actualHeal}</b> can yenilendi.
+        ❤️ +${actualHeal} can
 
         <br>
 
@@ -1125,7 +1114,6 @@ function usePotion(item) {
         <b>
             ${game.player.hp}/${game.player.maxHp}
         </b>
-
         `,
 
         "dm"
@@ -1136,7 +1124,6 @@ function usePotion(item) {
     removeEmptyItems();
 
     updateAllUI();
-
 
     return true;
 
@@ -1160,50 +1147,51 @@ function useTorch(item) {
             "dm"
         );
 
+        updateInventoryUI();
+
+        return;
+
     }
 
-    else {
 
-        if (!item || item.quantity <= 0) {
-
-            addStoryMessage(
-                "🔥 Kullanılabilir meşalen yok.",
-                "dm"
-            );
-
-            return;
-
-        }
-
-
-        game.world.torchActive =
-            true;
-
-
-        item.quantity--;
-
+    if (
+        !item ||
+        item.quantity <= 0
+    ) {
 
         addStoryMessage(
-
-            `
-
-            🔥 <b>Meşaleyi yaktın.</b>
-
-            <br><br>
-
-            Karanlık çevre artık daha görünür.
-
-            `,
-
+            "🔥 Kullanabileceğin meşalen yok.",
             "dm"
-
         );
 
-
-        removeEmptyItems();
+        return;
 
     }
 
+
+    game.world.torchActive =
+        true;
+
+
+    item.quantity--;
+
+
+    addStoryMessage(
+
+        `
+        🔥 Meşaleyi yaktın.
+
+        <br><br>
+
+        Karanlık çevre artık daha görünür.
+        `,
+
+        "dm"
+
+    );
+
+
+    removeEmptyItems();
 
     updateInventoryUI();
 
@@ -1211,7 +1199,7 @@ function useTorch(item) {
 
 
 /* =========================================================
-   BOŞ EŞYALARI TEMİZLE
+   BOŞ EŞYALARI SİL
 ========================================================= */
 
 function removeEmptyItems() {
@@ -1219,7 +1207,7 @@ function removeEmptyItems() {
     game.player.inventory =
         game.player.inventory.filter(
             item =>
-                item.quantity > 0
+                Number(item.quantity || 0) > 0
         );
 
 }
@@ -1231,15 +1219,17 @@ function removeEmptyItems() {
 
 function showCharacter() {
 
-    if (!characterInfo) return;
+    if (!characterInfo) {
+        return;
+    }
 
 
     const weapon =
         game.player.equippedWeapon
-            ? getInventoryItem(
-                game.player.equippedWeapon
-            )
-            : null;
+        ? getInventoryItem(
+            game.player.equippedWeapon
+        )
+        : null;
 
 
     characterInfo.innerHTML = `
@@ -1273,8 +1263,6 @@ function showCharacter() {
             <strong>XP:</strong>
             ${game.player.xp}
         </p>
-
-        <hr>
 
         <p>
             <strong>Can:</strong>
@@ -1332,13 +1320,9 @@ function showCharacter() {
     `;
 
 
-    if (characterModal) {
-
-        characterModal.classList.remove(
-            "hidden"
-        );
-
-    }
+    characterModal?.classList.remove(
+        "hidden"
+    );
 
 }
 
@@ -1349,7 +1333,7 @@ function showCharacter() {
 
 function updateCharacterUI() {
 
-    const nameElement =
+    const name =
         document.getElementById(
             "characterName"
         );
@@ -1359,22 +1343,22 @@ function updateCharacterUI() {
             "characterClass"
         );
 
-    const hpElement =
+    const hp =
         document.getElementById("hp");
 
-    const levelElement =
+    const level =
         document.getElementById("level");
 
-    const xpElement =
+    const xp =
         document.getElementById("xp");
 
-    const goldElement =
+    const gold =
         document.getElementById("gold");
 
 
-    if (nameElement) {
+    if (name) {
 
-        nameElement.textContent =
+        name.textContent =
             game.player.name;
 
     }
@@ -1388,33 +1372,33 @@ function updateCharacterUI() {
     }
 
 
-    if (hpElement) {
+    if (hp) {
 
-        hpElement.textContent =
+        hp.textContent =
             `${game.player.hp} / ${game.player.maxHp}`;
 
     }
 
 
-    if (levelElement) {
+    if (level) {
 
-        levelElement.textContent =
+        level.textContent =
             game.player.level;
 
     }
 
 
-    if (xpElement) {
+    if (xp) {
 
-        xpElement.textContent =
+        xp.textContent =
             game.player.xp;
 
     }
 
 
-    if (goldElement) {
+    if (gold) {
 
-        goldElement.textContent =
+        gold.textContent =
             game.player.gold;
 
     }
@@ -1485,7 +1469,9 @@ function createNPC(data) {
         );
 
 
-    if (existing) return existing;
+    if (existing) {
+        return existing;
+    }
 
 
     const npc = {
@@ -1513,10 +1499,15 @@ function createNPC(data) {
 
     game.npcs.push(npc);
 
+
     return npc;
 
 }
 
+
+/* =========================================================
+   NPC BAŞLAT
+========================================================= */
 
 function initializeNPCs() {
 
@@ -1618,7 +1609,9 @@ function createQuest(data) {
         );
 
 
-    if (existing) return existing;
+    if (existing) {
+        return existing;
+    }
 
 
     const quest = {
@@ -1645,7 +1638,8 @@ function createQuest(data) {
         reward:
             data.reward || 0,
 
-        status: "active",
+        status:
+            "active",
 
         createdAt:
             new Date().toISOString()
@@ -1655,10 +1649,15 @@ function createQuest(data) {
 
     game.quests.push(quest);
 
+
     return quest;
 
 }
 
+
+/* =========================================================
+   GÖREVLER
+========================================================= */
 
 function initializeQuests() {
 
@@ -1726,19 +1725,25 @@ function initializeQuests() {
 
 function updateQuestUI() {
 
-    if (!questPanel) return;
+    if (!questPanel) {
+        return;
+    }
 
 
     questPanel.innerHTML = "";
 
 
+    const activeQuests =
+        game.quests.filter(
+            quest =>
+                quest.status === "active"
+        );
+
+
     if (questCount) {
 
         questCount.textContent =
-            game.quests.filter(
-                quest =>
-                    quest.status === "active"
-            ).length;
+            activeQuests.length;
 
     }
 
@@ -1749,11 +1754,9 @@ function updateQuestUI() {
     ) {
 
         questPanel.innerHTML = `
-
             <p class="empty">
                 Aktif görev yok.
             </p>
-
         `;
 
         return;
@@ -1763,11 +1766,11 @@ function updateQuestUI() {
 
     game.quests.forEach(quest => {
 
-        const questElement =
+        const element =
             document.createElement("div");
 
 
-        questElement.className =
+        element.className =
             "quest-item";
 
 
@@ -1778,7 +1781,7 @@ function updateQuestUI() {
             ).length;
 
 
-        questElement.innerHTML = `
+        element.innerHTML = `
 
             <strong>
                 📜 ${escapeHTML(quest.title)}
@@ -1795,39 +1798,36 @@ function updateQuestUI() {
 
             <ul>
 
-                ${
-                    quest.objectives
-                        .map(
-                            objective => `
+                ${quest.objectives.map(
+                    objective => `
 
-                                <li>
-                                    ${
-                                        objective.completed
-                                        ? "✅"
-                                        : "⬜"
-                                    }
+                    <li>
+                        ${
+                            objective.completed
+                            ? "✅"
+                            : "⬜"
+                        }
 
-                                    ${escapeHTML(
-                                        objective.text
-                                    )}
-                                </li>
+                        ${escapeHTML(
+                            objective.text
+                        )}
+                    </li>
 
-                            `
-                        )
-                        .join("")
-                }
+                `).join("")}
 
             </ul>
 
             <small>
-                Ödül: ${quest.reward} altın
+                Ödül:
+                ${quest.reward}
+                altın
             </small>
 
         `;
 
 
         questPanel.appendChild(
-            questElement
+            element
         );
 
     });
@@ -1850,7 +1850,9 @@ function completeQuestObjective(
         );
 
 
-    if (!quest) return;
+    if (!quest) {
+        return;
+    }
 
 
     const objective =
@@ -1863,9 +1865,7 @@ function completeQuestObjective(
         !objective ||
         objective.completed
     ) {
-
         return;
-
     }
 
 
@@ -1892,7 +1892,6 @@ function completeQuestObjective(
         addStoryMessage(
 
             `
-
             🎉 <b>Görev tamamlandı!</b>
 
             <br><br>
@@ -1901,8 +1900,7 @@ function completeQuestObjective(
 
             <br>
 
-            💰 ${quest.reward} altın kazandın.
-
+            💰 +${quest.reward} altın
             `,
 
             "dm"
@@ -1926,9 +1924,7 @@ function completeQuestObjective(
 function rollD20() {
 
     const result =
-        Math.floor(
-            Math.random() * 20
-        ) + 1;
+        rollDice("1d20");
 
 
     if (diceResult) {
@@ -2062,12 +2058,16 @@ const enemies = {
 function rollDice(notation) {
 
     const match =
-        String(notation).match(
-            /^(\d+)d(\d+)$/
-        );
+        String(notation)
+            .toLowerCase()
+            .match(
+                /^(\d+)d(\d+)$/
+            );
 
 
-    if (!match) return 0;
+    if (!match) {
+        return 0;
+    }
 
 
     const count =
@@ -2107,7 +2107,7 @@ function rollDice(notation) {
 function getModifier(stat) {
 
     return Math.floor(
-        (stat - 10) / 2
+        (Number(stat) - 10) / 2
     );
 
 }
@@ -2122,18 +2122,27 @@ function startCombat(
     alreadyDescribed = false
 ) {
 
-    const template =
-        enemies[enemyId];
-
-
-    if (!template) return;
-
-
     if (game.combat.active) {
 
         addStoryMessage(
             "⚔️ Zaten savaş halindesin!",
             "dm"
+        );
+
+        return;
+
+    }
+
+
+    const template =
+        enemies[enemyId];
+
+
+    if (!template) {
+
+        console.error(
+            "Düşman bulunamadı:",
+            enemyId
         );
 
         return;
@@ -2149,10 +2158,6 @@ function startCombat(
         1;
 
 
-    game.combat.defending =
-        false;
-
-
     game.combat.enemy = {
 
         id: template.id,
@@ -2165,15 +2170,20 @@ function startCombat(
 
         armor: template.armor,
 
-        attackBonus: template.attackBonus,
+        attackBonus:
+            template.attackBonus,
 
-        damage: template.damage,
+        damage:
+            template.damage,
 
-        xp: template.xp,
+        xp:
+            template.xp,
 
-        gold: template.gold,
+        gold:
+            template.gold,
 
-        description: template.description
+        description:
+            template.description
 
     };
 
@@ -2190,52 +2200,42 @@ function startCombat(
             alreadyDescribed
             ? ""
             : escapeHTML(
-                game.combat.enemy.description
+                template.description
             )
         }
 
         <br><br>
 
         👹
-        <b>
-            ${escapeHTML(
-                game.combat.enemy.name
-            )}
-        </b>
+        <b>${escapeHTML(template.name)}</b>
 
         <br>
 
         ❤️ Can:
         <b>
-            ${game.combat.enemy.hp}/${game.combat.enemy.maxHp}
+            ${template.maxHp}/${template.maxHp}
         </b>
 
         <br>
 
         🛡️ Zırh:
-        <b>
-            ${game.combat.enemy.armor}
-        </b>
+        <b>${template.armor}</b>
 
         <br><br>
 
-        ⚔️ Saldırmak için:
-        <b>"saldır"</b>
+        <b>Komutlar:</b>
 
         <br>
 
-        🧪 İksir için:
-        <b>"iksir kullan"</b>
+        "saldır"
 
         <br>
 
-        🏃 Kaçmak için:
-        <b>"kaç"</b>
+        "iksir kullan"
 
         <br>
 
-        🛡️ Savunmak için:
-        <b>"savun"</b>
+        "kaç"
 
         `,
 
@@ -2255,30 +2255,23 @@ function startCombat(
 
 function handleCombatAction(action) {
 
-    if (!game.combat.active) return;
+    if (!game.combat.active) {
+        return;
+    }
 
 
     const lower =
         normalizeText(action);
 
 
-    /* =====================================================
+    /* =========================================
        İKSİR
-    ===================================================== */
+    ========================================= */
 
     if (
-        containsAny(lower, [
-
-            "iksir",
-            "şifa",
-            "sifa",
-            "can doldur",
-            "iyileştir",
-            "iyilestir",
-            "ilaç",
-            "ilac"
-
-        ])
+        lower.includes("iksir") ||
+        lower.includes("sifa") ||
+        lower.includes("potion")
     ) {
 
         const potion =
@@ -2301,10 +2294,10 @@ function handleCombatAction(action) {
             usePotion(potion);
 
 
-        if (used && game.combat.active) {
-
-            game.combat.defending =
-                false;
+        if (
+            used &&
+            game.combat.active
+        ) {
 
             enemyTurn();
 
@@ -2316,24 +2309,13 @@ function handleCombatAction(action) {
     }
 
 
-    /* =====================================================
+    /* =========================================
        KAÇ
-    ===================================================== */
+    ========================================= */
 
     if (
-        containsAny(lower, [
-
-            "kaç",
-            "kaçıyorum",
-            "kaçiyorum",
-            "geri çekil",
-            "geri cekil",
-            "uzaklaş",
-            "uzaklas",
-            "koş",
-            "kos"
-
-        ])
+        lower.includes("kac") ||
+        lower.includes("geri cekil")
     ) {
 
         attemptFlee();
@@ -2343,59 +2325,17 @@ function handleCombatAction(action) {
     }
 
 
-    /* =====================================================
-       SAVUN
-    ===================================================== */
-
-    if (
-        containsAny(lower, [
-
-            "savun",
-            "savunma",
-            "bekle",
-            "kalkanımı kaldır",
-            "kalkanimi kaldir",
-            "korun"
-
-        ])
-    ) {
-
-        defendAction();
-
-        return;
-
-    }
-
-
-    /* =====================================================
+    /* =========================================
        SALDIR
-    ===================================================== */
+    ========================================= */
 
     if (
-        containsAny(lower, [
-
-            "saldır",
-            "saldir",
-            "vur",
-            "vursam",
-            "kılıç",
-            "kilic",
-            "kılıcı",
-            "kilici",
-            "bıçak",
-            "bicak",
-            "balta",
-            "mızrak",
-            "mizrak",
-            "yumruk",
-            "saldırı",
-            "saldiri",
-            "düşmana",
-            "dusmana",
-            "yaratığa",
-            "yaratiga"
-
-        ])
+        lower.includes("saldir") ||
+        lower.includes("vur") ||
+        lower.includes("kılıc") ||
+        lower.includes("kilic") ||
+        lower.includes("bicak") ||
+        lower.includes("buyu")
     ) {
 
         playerAttack();
@@ -2405,14 +2345,13 @@ function handleCombatAction(action) {
     }
 
 
-    /* =====================================================
-       BELİRSİZ KOMUT
-    ===================================================== */
+    /* =========================================
+       BİLİNMEYEN KOMUT
+    ========================================= */
 
     addStoryMessage(
 
         `
-
         ⚔️ <b>Savaş devam ediyor.</b>
 
         <br><br>
@@ -2431,14 +2370,8 @@ function handleCombatAction(action) {
 
         <br>
 
-        <b>"savun"</b>
-        — Gelen saldırıya karşı savun.
-
-        <br>
-
         <b>"kaç"</b>
         — Kaçmayı dene.
-
         `,
 
         "dm"
@@ -2454,24 +2387,22 @@ function handleCombatAction(action) {
 
 function playerAttack() {
 
-    if (!game.combat.active) return;
+    if (!game.combat.active) {
+        return;
+    }
 
 
     const enemy =
         game.combat.enemy;
 
 
-    if (!enemy) return;
-
-
-    game.combat.defending =
-        false;
+    if (!enemy) {
+        return;
+    }
 
 
     const attackRoll =
-        Math.floor(
-            Math.random() * 20
-        ) + 1;
+        rollDice("1d20");
 
 
     const strengthModifier =
@@ -2499,7 +2430,7 @@ function playerAttack() {
 
     let message = `
 
-        ⚔️ <b>Saldırı yaptın!</b>
+        ⚔️ <b>Saldırdın!</b>
 
         <br><br>
 
@@ -2508,8 +2439,13 @@ function playerAttack() {
 
         <br>
 
-        ➕ Saldırı bonusu:
-        <b>${attackModifier}</b>
+        💪 Güç bonusu:
+        <b>
+            ${attackModifier >= 0
+                ? "+"
+                : ""
+            }${attackModifier}
+        </b>
 
         <br>
 
@@ -2524,9 +2460,9 @@ function playerAttack() {
     `;
 
 
-    /* =====================================================
+    /* =========================================
        KRİTİK VURUŞ
-    ===================================================== */
+    ========================================= */
 
     if (attackRoll === 20) {
 
@@ -2539,8 +2475,11 @@ function playerAttack() {
 
 
         const damage =
-            baseDamage * 2 +
-            strengthModifier;
+            Math.max(
+                1,
+                baseDamage * 2 +
+                strengthModifier
+            );
 
 
         enemy.hp =
@@ -2558,11 +2497,14 @@ function playerAttack() {
 
             <br>
 
+            ⚔️ Silah:
             ${
                 weapon
-                ? `⚔️ Silah: <b>${escapeHTML(weapon.name)}</b><br>`
-                : ""
+                ? escapeHTML(weapon.name)
+                : "Yumruk"
             }
+
+            <br>
 
             💥 Hasar:
             <b>${damage}</b>
@@ -2572,9 +2514,9 @@ function playerAttack() {
     }
 
 
-    /* =====================================================
+    /* =========================================
        KRİTİK BAŞARISIZ
-    ===================================================== */
+    ========================================= */
 
     else if (attackRoll === 1) {
 
@@ -2582,26 +2524,25 @@ function playerAttack() {
 
             <br><br>
 
-            💀 <b>Kritik başarısızlık!</b>
+            💀 <b>KRİTİK BAŞARISIZLIK!</b>
 
             <br>
 
-            Saldırın hedefini ıskaladı.
-
+            Saldırın tamamen ıskaladı.
         `;
 
     }
 
 
-    /* =====================================================
+    /* =========================================
        NORMAL VURUŞ
-    ===================================================== */
+    ========================================= */
 
     else if (
         totalAttack >= enemy.armor
     ) {
 
-        const baseDamage =
+        const damageRoll =
             weapon
             ? rollDice(
                 weapon.damage || "1d6"
@@ -2609,10 +2550,10 @@ function playerAttack() {
             : rollDice("1d4");
 
 
-        const finalDamage =
+        const damage =
             Math.max(
                 1,
-                baseDamage +
+                damageRoll +
                 strengthModifier
             );
 
@@ -2620,7 +2561,7 @@ function playerAttack() {
         enemy.hp =
             Math.max(
                 0,
-                enemy.hp - finalDamage
+                enemy.hp - damage
             );
 
 
@@ -2634,21 +2575,28 @@ function playerAttack() {
 
             ${
                 weapon
-                ? `⚔️ ${escapeHTML(weapon.name)}<br>`
-                : `👊 Silahsız saldırı<br>`
+                ? `⚔️ ${escapeHTML(weapon.name)}`
+                : "👊 Yumruk"
             }
 
-            💥 Hasar:
-            <b>${finalDamage}</b>
+            <br>
+
+            🎲 Hasar zarı:
+            <b>${damageRoll}</b>
+
+            <br>
+
+            💥 Toplam hasar:
+            <b>${damage}</b>
 
         `;
 
     }
 
 
-    /* =====================================================
+    /* =========================================
        ISKALAMA
-    ===================================================== */
+    ========================================= */
 
     else {
 
@@ -2658,6 +2606,9 @@ function playerAttack() {
 
             ❌ <b>Iskaladın!</b>
 
+            <br>
+
+            Saldırın düşmanın zırhını aşamadı.
         `;
 
     }
@@ -2668,9 +2619,11 @@ function playerAttack() {
         <br><br>
 
         👹
-        ${escapeHTML(enemy.name)}
-        Canı:
+        <b>${escapeHTML(enemy.name)}</b>
 
+        <br>
+
+        ❤️ Düşman Canı:
         <b>
             ${enemy.hp}/${enemy.maxHp}
         </b>
@@ -2687,6 +2640,10 @@ function playerAttack() {
     updateCombatUI();
 
 
+    /* =========================================
+       DÜŞMAN ÖLDÜ
+    ========================================= */
+
     if (enemy.hp <= 0) {
 
         winCombat();
@@ -2696,41 +2653,9 @@ function playerAttack() {
     }
 
 
-    enemyTurn();
-
-}
-
-
-/* =========================================================
-   SAVUNMA
-========================================================= */
-
-function defendAction() {
-
-    if (!game.combat.active) return;
-
-
-    game.combat.defending =
-        true;
-
-
-    addStoryMessage(
-
-        `
-
-        🛡️ <b>Savunma pozisyonu aldın.</b>
-
-        <br><br>
-
-        Bir sonraki düşman saldırısında
-        savunman güçlenecek.
-
-        `,
-
-        "dm"
-
-    );
-
+    /* =========================================
+       DÜŞMAN TURU
+    ========================================= */
 
     enemyTurn();
 
@@ -2743,37 +2668,36 @@ function defendAction() {
 
 function enemyTurn() {
 
-    if (!game.combat.active) return;
+    if (!game.combat.active) {
+        return;
+    }
 
 
     const enemy =
         game.combat.enemy;
 
 
-    if (!enemy) return;
+    if (!enemy) {
+        return;
+    }
 
 
     game.combat.round++;
 
 
     const attackRoll =
-        Math.floor(
-            Math.random() * 20
-        ) + 1;
+        rollDice("1d20");
 
 
-    let playerArmor =
-        10 +
+    const dexterityModifier =
         getModifier(
             game.player.stats.dexterity
         );
 
 
-    if (game.combat.defending) {
-
-        playerArmor += 5;
-
-    }
+    const playerArmor =
+        10 +
+        dexterityModifier;
 
 
     const totalAttack =
@@ -2783,7 +2707,8 @@ function enemyTurn() {
 
     let message = `
 
-        👹 <b>${escapeHTML(enemy.name)}</b>
+        👹
+        <b>${escapeHTML(enemy.name)}</b>
         saldırıyor!
 
         <br><br>
@@ -2793,7 +2718,7 @@ function enemyTurn() {
 
         <br>
 
-        🎯 Toplam saldırı:
+        🎯 Saldırı:
         <b>${totalAttack}</b>
 
         <br>
@@ -2804,27 +2729,14 @@ function enemyTurn() {
     `;
 
 
-    /* =====================================================
+    /* =========================================
        KRİTİK
-    ===================================================== */
+    ========================================= */
 
     if (attackRoll === 20) {
 
-        let damage =
+        const damage =
             rollDice(enemy.damage) * 2;
-
-
-        if (game.combat.defending) {
-
-            damage =
-                Math.max(
-                    1,
-                    Math.floor(
-                        damage / 2
-                    )
-                );
-
-        }
 
 
         game.player.hp =
@@ -2844,38 +2756,25 @@ function enemyTurn() {
 
             💥 Aldığın hasar:
             <b>${damage}</b>
-
         `;
 
     }
 
 
-    /* =====================================================
+    /* =========================================
        NORMAL VURUŞ
-    ===================================================== */
+    ========================================= */
 
     else if (
+        attackRoll !== 1 &&
         totalAttack >= playerArmor
     ) {
 
-        let damage =
+        const damage =
             Math.max(
                 1,
                 rollDice(enemy.damage)
             );
-
-
-        if (game.combat.defending) {
-
-            damage =
-                Math.max(
-                    1,
-                    Math.floor(
-                        damage / 2
-                    )
-                );
-
-        }
 
 
         game.player.hp =
@@ -2895,29 +2794,14 @@ function enemyTurn() {
 
             💥 Aldığın hasar:
             <b>${damage}</b>
-
         `;
-
-
-        if (game.combat.defending) {
-
-            message += `
-
-                <br>
-
-                🛡️ Savunman sayesinde
-                hasarın azaltıldı.
-
-            `;
-
-        }
 
     }
 
 
-    /* =====================================================
-       ISKALAMA
-    ===================================================== */
+    /* =========================================
+       DÜŞMAN ISKALADI
+    ========================================= */
 
     else {
 
@@ -2926,22 +2810,16 @@ function enemyTurn() {
             <br><br>
 
             ❌ Düşman saldırısını ıskaladı.
-
         `;
 
     }
-
-
-    game.combat.defending =
-        false;
 
 
     message += `
 
         <br><br>
 
-        ❤️ Canın:
-
+        ❤️ Senin Canın:
         <b>
             ${game.player.hp}/${game.player.maxHp}
         </b>
@@ -2964,25 +2842,22 @@ function enemyTurn() {
 
     }
 
-
-    updateCombatUI();
-
 }
 
 
 /* =========================================================
-   KAÇMA
+   KAÇ
 ========================================================= */
 
 function attemptFlee() {
 
-    if (!game.combat.active) return;
+    if (!game.combat.active) {
+        return;
+    }
 
 
     const roll =
-        Math.floor(
-            Math.random() * 20
-        ) + 1;
+        rollDice("1d20");
 
 
     const dexterity =
@@ -2992,7 +2867,8 @@ function attemptFlee() {
 
 
     const total =
-        roll + dexterity;
+        roll +
+        dexterity;
 
 
     if (total >= 12) {
@@ -3000,19 +2876,17 @@ function attemptFlee() {
         addStoryMessage(
 
             `
-
             🏃 <b>Kaçmayı başardın!</b>
 
             <br><br>
 
             🎲 D20:
-            <b>${roll}</b>
+            ${roll}
 
             <br>
 
-            🏃 Çeviklik bonusu:
-            <b>${dexterity}</b>
-
+            🏹 Çeviklik bonusu:
+            ${dexterity}
             `,
 
             "dm"
@@ -3020,7 +2894,19 @@ function attemptFlee() {
         );
 
 
-        endCombat();
+        game.combat.active =
+            false;
+
+
+        game.combat.enemy =
+            null;
+
+
+        game.combat.round =
+            0;
+
+
+        updateAllUI();
 
         return;
 
@@ -3030,18 +2916,16 @@ function attemptFlee() {
     addStoryMessage(
 
         `
-
         ❌ <b>Kaçamadın!</b>
 
         <br><br>
 
         🎲 D20:
-        <b>${roll}</b>
+        ${roll}
 
-        <br><br>
+        <br>
 
         Düşman peşini bırakmıyor.
-
         `,
 
         "dm"
@@ -3050,30 +2934,6 @@ function attemptFlee() {
 
 
     enemyTurn();
-
-}
-
-
-/* =========================================================
-   SAVAŞ BİTİR
-========================================================= */
-
-function endCombat() {
-
-    game.combat.active =
-        false;
-
-    game.combat.enemy =
-        null;
-
-    game.combat.round =
-        0;
-
-    game.combat.defending =
-        false;
-
-
-    updateCombatUI();
 
 }
 
@@ -3088,29 +2948,22 @@ function winCombat() {
         game.combat.enemy;
 
 
-    if (!enemy) return;
-
-
-    const xpReward =
-        enemy.xp;
-
-
-    const goldReward =
-        enemy.gold;
+    if (!enemy) {
+        return;
+    }
 
 
     game.player.xp +=
-        xpReward;
+        enemy.xp;
 
 
     game.player.gold +=
-        goldReward;
+        enemy.gold;
 
 
     addStoryMessage(
 
         `
-
         🎉 <b>ZAFER!</b>
 
         <br><br>
@@ -3122,13 +2975,12 @@ function winCombat() {
         <br><br>
 
         ✨ XP:
-        <b>+${xpReward}</b>
+        <b>+${enemy.xp}</b>
 
         <br>
 
         💰 Altın:
-        <b>+${goldReward}</b>
-
+        <b>+${enemy.gold}</b>
         `,
 
         "dm"
@@ -3136,7 +2988,16 @@ function winCombat() {
     );
 
 
-    endCombat();
+    game.combat.active =
+        false;
+
+
+    game.combat.enemy =
+        null;
+
+
+    game.combat.round =
+        0;
 
 
     checkLevelUp();
@@ -3152,19 +3013,31 @@ function winCombat() {
 
 function loseCombat() {
 
+    const enemy =
+        game.combat.enemy;
+
+
     const enemyName =
-        game.combat.enemy
-        ? game.combat.enemy.name
+        enemy
+        ? enemy.name
         : "Düşman";
 
 
-    endCombat();
+    game.combat.active =
+        false;
+
+
+    game.combat.enemy =
+        null;
+
+
+    game.combat.round =
+        0;
 
 
     addStoryMessage(
 
         `
-
         💀 <b>YERE YIĞILDIN!</b>
 
         <br><br>
@@ -3180,7 +3053,6 @@ function loseCombat() {
 
         Blackmoor Köyü'nde gözlerini
         yeniden açıyorsun.
-
         `,
 
         "dm"
@@ -3216,14 +3088,10 @@ function getRequiredXP(level) {
 
 
 /* =========================================================
-   LEVEL UP
+   SEVİYE
 ========================================================= */
 
 function checkLevelUp() {
-
-    let leveledUp =
-        false;
-
 
     while (
         game.player.xp >=
@@ -3246,31 +3114,27 @@ function checkLevelUp() {
 
 
         const hpIncrease =
-            4 +
-            getModifier(
-                game.player.stats.constitution
+            Math.max(
+                1,
+                4 +
+                getModifier(
+                    game.player.stats
+                        .constitution
+                )
             );
 
 
         game.player.maxHp +=
-            Math.max(
-                1,
-                hpIncrease
-            );
+            hpIncrease;
 
 
         game.player.hp =
             game.player.maxHp;
 
 
-        leveledUp =
-            true;
-
-
         addStoryMessage(
 
             `
-
             🌟 <b>SEVİYE ATLADIN!</b>
 
             <br><br>
@@ -3280,13 +3144,12 @@ function checkLevelUp() {
 
             <br><br>
 
-            ❤️ Maksimum canın arttı.
+            ❤️ Maksimum can:
+            <b>${game.player.maxHp}</b>
 
             <br>
 
-            Can:
-            <b>${game.player.maxHp}</b>
-
+            Canın tamamen yenilendi.
             `,
 
             "dm"
@@ -3296,11 +3159,7 @@ function checkLevelUp() {
     }
 
 
-    if (leveledUp) {
-
-        updateCharacterUI();
-
-    }
+    updateCharacterUI();
 
 }
 
@@ -3321,17 +3180,23 @@ function updateCombatUI() {
 
 
     const story =
-        document.getElementById("story");
+        document.getElementById(
+            "story"
+        );
 
 
-    if (!story) return;
+    if (!story) {
+        return;
+    }
 
 
     const enemy =
         game.combat.enemy;
 
 
-    if (!enemy) return;
+    if (!enemy) {
+        return;
+    }
 
 
     let combatStatus =
@@ -3343,7 +3208,9 @@ function updateCombatUI() {
     if (!combatStatus) {
 
         combatStatus =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         combatStatus.id =
@@ -3381,19 +3248,14 @@ function updateCombatUI() {
         </div>
 
         <div>
+            🧙
+            ${game.player.hp}/${game.player.maxHp}
+        </div>
+
+        <div>
             🔄 Tur:
             ${game.combat.round}
         </div>
-
-        ${
-            game.combat.defending
-            ? `
-                <div>
-                    🛡️ Savunma aktif
-                </div>
-              `
-            : ""
-        }
 
     `;
 
@@ -3406,16 +3268,14 @@ function updateCombatUI() {
 
 function removeCombatUI() {
 
-    const combatStatus =
+    const status =
         document.getElementById(
             "combatStatus"
         );
 
 
-    if (combatStatus) {
-
-        combatStatus.remove();
-
+    if (status) {
+        status.remove();
     }
 
 }
@@ -3466,16 +3326,16 @@ function saveGame() {
 
 function loadGame() {
 
-    const savedGame =
+    const saved =
         localStorage.getItem(
             "realmOfShadowsSave"
         );
 
 
-    if (!savedGame) {
+    if (!saved) {
 
         addStoryMessage(
-            "📂 Kaydedilmiş bir oyun bulunamadı.",
+            "📂 Kaydedilmiş oyun bulunamadı.",
             "dm"
         );
 
@@ -3486,89 +3346,78 @@ function loadGame() {
 
     try {
 
-        const loadedGame =
-            JSON.parse(savedGame);
+        const data =
+            JSON.parse(saved);
 
 
         Object.assign(
             game.player,
-            loadedGame.player
+            data.player || {}
         );
 
 
         Object.assign(
             game.world,
-            loadedGame.world
+            data.world || {}
         );
 
 
         Object.assign(
             game.story,
-            loadedGame.story
+            data.story || {}
         );
 
 
         game.npcs =
-            loadedGame.npcs || [];
+            data.npcs || [];
 
 
         game.quests =
-            loadedGame.quests || [];
+            data.quests || [];
 
 
         game.factions =
-            loadedGame.factions || [];
+            data.factions || [];
 
 
         game.locations =
-            loadedGame.locations || [];
+            data.locations || [];
 
 
         game.combat =
-            loadedGame.combat || {
+            data.combat || {
 
                 active: false,
-
                 enemy: null,
-
-                round: 0,
-
-                defending: false
+                round: 0
 
             };
 
 
-        if (
-            typeof game.combat.defending !==
-            "boolean"
-        ) {
-
-            game.combat.defending =
-                false;
-
-        }
-
-
         game.ai =
-            loadedGame.ai || {
+            data.ai || {
 
                 lastResponse: null,
-
                 history: [],
-
                 pendingCheck: null
 
             };
 
 
-        if (!game.player.inventory) {
+        if (
+            !Array.isArray(
+                game.player.inventory
+            )
+        ) {
 
             game.player.inventory = [];
 
         }
 
 
-        if (!game.player.stats) {
+        if (
+            !game.player.stats
+        ) {
 
             game.player.stats = {
 
@@ -3585,13 +3434,6 @@ function loadGame() {
 
 
         updateAllUI();
-
-
-        if (game.combat.active) {
-
-            updateCombatUI();
-
-        }
 
 
         addStoryMessage(
@@ -3617,26 +3459,6 @@ function loadGame() {
     }
 
 }
-
-
-/* =========================================================
-   KARAKTER INPUTLARI
-========================================================= */
-
-const nameInput =
-    document.getElementById("nameInput");
-
-const raceInput =
-    document.getElementById("raceInput");
-
-const classInput =
-    document.getElementById("classInput");
-
-const backgroundInput =
-    document.getElementById("backgroundInput");
-
-const createCharacterButton =
-    document.getElementById("createCharacter");
 
 
 /* =========================================================
@@ -3778,9 +3600,7 @@ function createCharacter() {
         !classInput ||
         !backgroundInput
     ) {
-
         return;
-
     }
 
 
@@ -3813,39 +3633,39 @@ function createCharacter() {
         backgroundInput.value;
 
 
-    const baseStats =
+    const base =
         classStats[className];
 
 
-    const bonuses =
+    const bonus =
         raceBonuses[race];
 
 
-    const newStats = {
+    const stats = {
 
         strength:
-            baseStats.strength +
-            (bonuses.strength || 0),
+            base.strength +
+            (bonus.strength || 0),
 
         dexterity:
-            baseStats.dexterity +
-            (bonuses.dexterity || 0),
+            base.dexterity +
+            (bonus.dexterity || 0),
 
         constitution:
-            baseStats.constitution +
-            (bonuses.constitution || 0),
+            base.constitution +
+            (bonus.constitution || 0),
 
         intelligence:
-            baseStats.intelligence +
-            (bonuses.intelligence || 0),
+            base.intelligence +
+            (bonus.intelligence || 0),
 
         wisdom:
-            baseStats.wisdom +
-            (bonuses.wisdom || 0),
+            base.wisdom +
+            (bonus.wisdom || 0),
 
         charisma:
-            baseStats.charisma +
-            (bonuses.charisma || 0)
+            base.charisma +
+            (bonus.charisma || 0)
 
     };
 
@@ -3875,15 +3695,15 @@ function createCharacter() {
 
 
     game.player.stats =
-        newStats;
+        stats;
 
 
     game.player.maxHp =
-        baseStats.maxHp;
+        base.maxHp;
 
 
     game.player.hp =
-        baseStats.maxHp;
+        base.maxHp;
 
 
     game.player.equippedWeapon =
@@ -3893,7 +3713,9 @@ function createCharacter() {
     game.player.inventory.forEach(
         item => {
 
-            if (item.type === "weapon") {
+            if (
+                item.type === "weapon"
+            ) {
 
                 item.equipped =
                     false;
@@ -3907,26 +3729,20 @@ function createCharacter() {
     updateAllUI();
 
 
-    if (characterModal) {
-
-        characterModal.classList.add(
-            "hidden"
-        );
-
-    }
+    characterModal?.classList.add(
+        "hidden"
+    );
 
 
     addStoryMessage(
 
         `
-
-        <b>⚔️ Karakter oluşturuldu.</b>
+        ⚔️ <b>Karakter oluşturuldu.</b>
 
         <br><br>
 
         <b>${escapeHTML(name)}</b>,
-        artık Realm of Shadows dünyasına
-        adım atıyor.
+        Realm of Shadows dünyasına adım atıyor.
 
         <br><br>
 
@@ -3942,11 +3758,38 @@ function createCharacter() {
 
         Geçmiş:
         <b>${escapeHTML(background)}</b>
-
         `,
 
         "dm"
 
+    );
+
+}
+
+
+/* =========================================================
+   ENVANTER AÇ
+========================================================= */
+
+function openInventory() {
+
+    updateInventoryUI();
+
+    inventoryModal?.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+/* =========================================================
+   ENVANTER KAPAT
+========================================================= */
+
+function closeInventoryModal() {
+
+    inventoryModal?.classList.add(
+        "hidden"
     );
 
 }
@@ -3983,207 +3826,44 @@ function updateAllUI() {
 
 
 /* =========================================================
-   KARAKTER BUTONU
+   EVENTLER
 ========================================================= */
 
-if (characterButton) {
 
-    characterButton.addEventListener(
-        "click",
-        showCharacter
-    );
+/* KARAKTER */
 
-}
+characterButton?.addEventListener(
+    "click",
+    showCharacter
+);
 
 
-/* =========================================================
-   KARAKTER KAPAT
-========================================================= */
+/* KARAKTER KAPAT */
 
-if (closeCharacter) {
+closeCharacter?.addEventListener(
+    "click",
+    () => {
 
-    closeCharacter.addEventListener(
-        "click",
-        () => {
+        characterModal?.classList.add(
+            "hidden"
+        );
 
-            if (characterModal) {
+    }
+);
 
-                characterModal.classList.add(
-                    "hidden"
-                );
 
-            }
+/* KARAKTER MODAL DIŞI */
 
-        }
-    );
-
-}
-
-
-/* =========================================================
-   KARAKTER MODAL DIŞI
-========================================================= */
-
-if (characterModal) {
-
-    characterModal.addEventListener(
-        "click",
-        event => {
-
-            if (
-                event.target ===
-                characterModal
-            ) {
-
-                characterModal.classList.add(
-                    "hidden"
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   ENVANTER AÇ
-========================================================= */
-
-function openInventory() {
-
-    if (!inventoryModal) return;
-
-
-    updateInventoryUI();
-
-
-    inventoryModal.classList.remove(
-        "hidden"
-    );
-
-}
-
-
-/* =========================================================
-   ENVANTER KAPAT
-========================================================= */
-
-function closeInventoryModal() {
-
-    if (!inventoryModal) return;
-
-
-    inventoryModal.classList.add(
-        "hidden"
-    );
-
-}
-
-
-/* =========================================================
-   ENVANTER BUTONU
-========================================================= */
-
-if (inventoryButton) {
-
-    inventoryButton.addEventListener(
-        "click",
-        event => {
-
-            event.preventDefault();
-
-            event.stopPropagation();
-
-            openInventory();
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   ENVANTER KAPAT
-========================================================= */
-
-if (closeInventory) {
-
-    closeInventory.addEventListener(
-        "click",
-        event => {
-
-            event.preventDefault();
-
-            event.stopPropagation();
-
-            closeInventoryModal();
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   ENVANTER MODAL DIŞI
-========================================================= */
-
-if (inventoryModal) {
-
-    inventoryModal.addEventListener(
-        "click",
-        event => {
-
-            if (
-                event.target ===
-                inventoryModal
-            ) {
-
-                closeInventoryModal();
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   ESC
-========================================================= */
-
-document.addEventListener(
-    "keydown",
+characterModal?.addEventListener(
+    "click",
     event => {
 
-        if (event.key !== "Escape") return;
-
-
         if (
-            characterModal &&
-            !characterModal.classList.contains(
-                "hidden"
-            )
+            event.target ===
+            characterModal
         ) {
 
             characterModal.classList.add(
-                "hidden"
-            );
-
-        }
-
-
-        if (
-            inventoryModal &&
-            !inventoryModal.classList.contains(
-                "hidden"
-            )
-        ) {
-
-            inventoryModal.classList.add(
                 "hidden"
             );
 
@@ -4193,105 +3873,144 @@ document.addEventListener(
 );
 
 
-/* =========================================================
-   EYLEM BUTONU
-========================================================= */
+/* ENVANTER */
 
-if (actionButton) {
+inventoryButton?.addEventListener(
+    "click",
+    event => {
 
-    actionButton.addEventListener(
-        "click",
-        playerAction
-    );
+        event.preventDefault();
 
-}
+        event.stopPropagation();
+
+        openInventory();
+
+    }
+);
 
 
-/* =========================================================
-   ENTER
-========================================================= */
+/* ENVANTER KAPAT */
 
-if (playerInput) {
+closeInventory?.addEventListener(
+    "click",
+    event => {
 
-    playerInput.addEventListener(
-        "keydown",
-        event => {
+        event.preventDefault();
 
-            if (
-                event.key === "Enter" &&
-                !event.shiftKey
-            ) {
+        event.stopPropagation();
 
-                event.preventDefault();
+        closeInventoryModal();
 
-                playerAction();
+    }
+);
 
-            }
+
+/* ENVANTER DIŞI */
+
+inventoryModal?.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            inventoryModal
+        ) {
+
+            closeInventoryModal();
 
         }
-    );
 
-}
+    }
+);
+
+
+/* ESC */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (event.key !== "Escape") {
+            return;
+        }
+
+
+        characterModal?.classList.add(
+            "hidden"
+        );
+
+
+        inventoryModal?.classList.add(
+            "hidden"
+        );
+
+    }
+);
+
+
+/* EYLEM */
+
+actionButton?.addEventListener(
+    "click",
+    playerAction
+);
+
+
+/* ENTER */
+
+playerInput?.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            playerAction();
+
+        }
+
+    }
+);
+
+
+/* KAYDET */
+
+saveButton?.addEventListener(
+    "click",
+    saveGame
+);
+
+
+/* YÜKLE */
+
+loadButton?.addEventListener(
+    "click",
+    loadGame
+);
+
+
+/* ZAR */
+
+rollButton?.addEventListener(
+    "click",
+    rollD20
+);
+
+
+/* KARAKTER OLUŞTUR */
+
+createCharacterButton?.addEventListener(
+    "click",
+    createCharacter
+);
 
 
 /* =========================================================
-   KAYDET
-========================================================= */
-
-if (saveButton) {
-
-    saveButton.addEventListener(
-        "click",
-        saveGame
-    );
-
-}
-
-
-/* =========================================================
-   YÜKLE
-========================================================= */
-
-if (loadButton) {
-
-    loadButton.addEventListener(
-        "click",
-        loadGame
-    );
-
-}
-
-
-/* =========================================================
-   ZAR
-========================================================= */
-
-if (rollButton) {
-
-    rollButton.addEventListener(
-        "click",
-        rollD20
-    );
-
-}
-
-
-/* =========================================================
-   KARAKTER OLUŞTUR
-========================================================= */
-
-if (createCharacterButton) {
-
-    createCharacterButton.addEventListener(
-        "click",
-        createCharacter
-    );
-
-}
-
-
-/* =========================================================
-   DÜNYA
+   DÜNYA BAŞLANGICI
 ========================================================= */
 
 function initializeWorld() {
@@ -4309,37 +4028,49 @@ function initializeWorld() {
 
 function startGame() {
 
-    console.log(
-        "Realm of Shadows başlatıldı."
-    );
+    const story =
+        document.getElementById(
+            "story"
+        );
 
 
-    addStoryMessage(
+    if (
+        story &&
+        story.children.length === 0
+    ) {
 
-        `
+        addStoryMessage(
 
-        Yağmur, Blackmoor Köyü'nün taş
-        sokaklarını dövüyor.
+            `
+            Yağmur, Blackmoor Köyü'nün taş
+            sokaklarını dövüyor.
 
-        <br><br>
+            <br><br>
 
-        Köy meydanının ortasında eski bir kuyu
-        duruyor.
+            Köy meydanının ortasında eski bir kuyu
+            duruyor.
 
-        <br><br>
+            <br><br>
 
-        Terk edilmiş kilisenin kapısı ise rüzgâr
-        olmamasına rağmen yavaşça hareket ediyor.
+            Terk edilmiş kilisenin kapısı ise rüzgâr
+            olmamasına rağmen yavaşça hareket ediyor.
 
-        <br><br>
+            <br><br>
 
-        Gece daha yeni başlıyor.
+            Gece daha yeni başlıyor.
 
-        `,
+            <br><br>
 
-        "dm"
+            <b>
+            Ne yapmak istiyorsun?
+            </b>
+            `,
 
-    );
+            "dm"
+
+        );
+
+    }
 
 
     updateAllUI();
@@ -4357,25 +4088,45 @@ startGame();
 
 
 console.log(
-    "✅ Realm of Shadows TAM SİSTEM hazır."
+    "===================================="
 );
 
 console.log(
-    "⚔️ Savaş sistemi hazır."
+    "REALM OF SHADOWS HAZIR"
 );
 
 console.log(
-    "🎒 Envanter sistemi hazır."
+    "⚔️ Savaş sistemi aktif"
 );
 
 console.log(
-    "📜 Görev sistemi hazır."
+    "🎒 Envanter sistemi aktif"
 );
 
 console.log(
-    "🎲 Zar sistemi hazır."
+    "🛡️ Kuşanma sistemi aktif"
 );
 
 console.log(
-    "🧠 AI entegrasyonuna hazır."
+    "🧪 İksir sistemi aktif"
+);
+
+console.log(
+    "🏃 Kaçış sistemi aktif"
+);
+
+console.log(
+    "📜 Görev sistemi aktif"
+);
+
+console.log(
+    "🎲 Zar sistemi aktif"
+);
+
+console.log(
+    "💾 Kayıt/Yükleme aktif"
+);
+
+console.log(
+    "===================================="
 );
