@@ -1315,10 +1315,39 @@ function newGame() {
 }
 
 startGame();
+/* =========================================================
+   KAYDET / YÜKLE BUTONLARI
+========================================================= */
+
+const saveButton =
+    document.getElementById("saveButton");
+
+const loadButton =
+    document.getElementById("loadButton");
+
+
+if (saveButton) {
+
+    saveButton.addEventListener(
+        "click",
+        saveGame
+    );
+
+}
+
+
+if (loadButton) {
+
+    loadButton.addEventListener(
+        "click",
+        loadGame
+    );
+
+}
+
 
 /* =========================================================
    BAŞLAT
 ========================================================= */
 
 startGame();
-
