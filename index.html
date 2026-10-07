@@ -1,621 +1,2633 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Realm of Shadows</title>
 
-    <meta charset="UTF-8">
+<style>
+*{box-sizing:border-box}
+body{
+    margin:0;
+    background:#090b12;
+    color:#eee;
+    font-family:Arial,Helvetica,sans-serif;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+#game{min-height:100vh}
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+.topbar{
+    min-height:70px;
+    padding:12px 20px;
+    background:#111522;
+    border-bottom:1px solid #30374b;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+.logo{
+    color:#d9b86c;
+    font-size:22px;
+    font-weight:bold;
+}
+.top-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+.top-buttons button{
+    background:#1b2130;
+    color:#eee;
+    border:1px solid #394158;
+    padding:9px 13px;
+    border-radius:8px;
+}
+.top-buttons button:hover{
+    background:#2a3247;
+    border-color:#bd9348;
+}
 
-    <title>Realm of Shadows</title>
+.game-layout{
+    display:grid;
+    grid-template-columns:250px minmax(400px,1fr) 280px;
+    gap:15px;
+    max-width:1500px;
+    margin:auto;
+    padding:15px;
+}
 
-    <link rel="stylesheet" href="style.css">
+.left-panel,.right-panel{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
 
+.character-card,.stats-card,.side-card{
+    background:#111522;
+    border:1px solid #30374b;
+    border-radius:12px;
+    padding:16px;
+}
+
+.character-card{text-align:center}
+.avatar{
+    width:80px;
+    height:80px;
+    margin:auto;
+    display:grid;
+    place-items:center;
+    background:#1c2334;
+    border:1px solid #444e69;
+    border-radius:50%;
+    font-size:42px;
+}
+.character-card h2{
+    margin:10px 0 4px;
+}
+.character-card p{
+    color:#aaa;
+    margin:0;
+}
+
+.stats-card h3,.side-card h3{
+    margin-top:0;
+    color:#d9b86c;
+}
+
+.stat,.ability{
+    display:flex;
+    justify-content:space-between;
+    padding:8px 0;
+    border-bottom:1px solid #242a39;
+}
+.stat:last-child,.ability:last-child{border-bottom:0}
+
+.story-panel{
+    min-height:700px;
+    background:#10131d;
+    border:1px solid #30374b;
+    border-radius:12px;
+    padding:15px;
+    display:flex;
+    flex-direction:column;
+}
+
+.location{
+    background:#181d2a;
+    border:1px solid #343c53;
+    border-radius:9px;
+    padding:12px;
+    margin-bottom:12px;
+}
+.location-label{
+    color:#999;
+    font-size:13px;
+    margin-bottom:4px;
+}
+#location{color:#e4c77d}
+
+.story{
+    flex:1;
+    overflow-y:auto;
+    min-height:450px;
+    max-height:650px;
+    padding:5px;
+}
+
+.story-message{
+    padding:12px 14px;
+    margin-bottom:12px;
+    border-radius:10px;
+    line-height:1.6;
+}
+.story-message.dm{
+    background:#171c29;
+    border-left:3px solid #bd9348;
+}
+.story-message.player{
+    background:#182332;
+    border-left:3px solid #527aa5;
+}
+.message-author{
+    font-size:12px;
+    color:#caa968;
+    font-weight:bold;
+    margin-bottom:4px;
+}
+
+.action-area{
+    margin-top:12px;
+}
+#playerInput{
+    width:100%;
+    resize:vertical;
+    min-height:75px;
+    padding:12px;
+    background:#0b0e16;
+    color:#eee;
+    border:1px solid #394158;
+    border-radius:9px;
+    outline:none;
+}
+#playerInput:focus{
+    border-color:#bd9348;
+}
+.action-button{
+    width:100%;
+    margin-top:8px;
+    padding:12px;
+    border:0;
+    border-radius:9px;
+    background:#8d672f;
+    color:white;
+    font-weight:bold;
+}
+.action-button:hover{background:#a87c38}
+
+.side-card-header,.modal-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.item-count{
+    background:#8d672f;
+    border-radius:20px;
+    padding:3px 9px;
+    font-size:12px;
+}
+
+.quest-item{
+    padding:10px;
+    margin-bottom:9px;
+    background:#181d2a;
+    border-radius:8px;
+}
+.quest-item p{
+    color:#aaa;
+    font-size:13px;
+}
+.quest-item ul{
+    padding-left:20px;
+    font-size:13px;
+}
+.quest-item small{color:#d9b86c}
+
+.dice-card{text-align:center}
+.dice-result{
+    height:70px;
+    display:grid;
+    place-items:center;
+    font-size:38px;
+    font-weight:bold;
+    color:#d9b86c;
+}
+.dice-button{
+    width:100%;
+    padding:10px;
+    background:#252c3d;
+    color:#fff;
+    border:1px solid #414b65;
+    border-radius:8px;
+}
+
+.inventory-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+.inventory-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px;
+    background:#171c29;
+    border:1px solid #30374b;
+    border-radius:9px;
+}
+.inventory-item-icon{font-size:27px}
+.inventory-item-info{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+}
+.inventory-item-info span{
+    font-size:12px;
+    color:#999;
+}
+.inventory-item-info .equipped{
+    color:#78d68c;
+}
+.inventory-use-button{
+    background:#252d40;
+    color:white;
+    border:1px solid #414b65;
+    border-radius:7px;
+    padding:8px 10px;
+}
+.inventory-use-button:hover{
+    background:#34405a;
+}
+
+.combat-status{
+    margin-top:10px;
+    padding:12px;
+    background:#241719;
+    border:1px solid #7d3939;
+    border-radius:9px;
+    display:flex;
+    justify-content:space-around;
+    gap:10px;
+    flex-wrap:wrap;
+}
+.combat-status-title{
+    color:#e66a6a;
+    font-weight:bold;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    background:rgba(0,0,0,.75);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+.modal.hidden{display:none}
+.modal-content{
+    width:min(520px,100%);
+    max-height:90vh;
+    overflow:auto;
+    background:#111522;
+    border:1px solid #414b65;
+    border-radius:13px;
+    padding:22px;
+    position:relative;
+}
+.close{
+    position:absolute;
+    right:12px;
+    top:10px;
+    border:0;
+    background:transparent;
+    color:#aaa;
+    font-size:30px;
+}
+.close:hover{color:white}
+.modal-content label{
+    display:block;
+    margin:12px 0 5px;
+    color:#bbb;
+}
+.modal-content input,
+.modal-content select{
+    width:100%;
+    padding:10px;
+    background:#0b0e16;
+    color:#eee;
+    border:1px solid #394158;
+    border-radius:7px;
+}
+.character-info{
+    line-height:1.6;
+}
+.empty{
+    color:#888;
+    text-align:center;
+}
+
+@media(max-width:1050px){
+    .game-layout{
+        grid-template-columns:220px 1fr;
+    }
+    .right-panel{
+        grid-column:1/-1;
+        display:grid;
+        grid-template-columns:1fr 1fr;
+    }
+}
+@media(max-width:750px){
+    .topbar{
+        flex-direction:column;
+        align-items:stretch;
+    }
+    .top-buttons{
+        justify-content:center;
+    }
+    .game-layout{
+        grid-template-columns:1fr;
+    }
+    .right-panel{
+        grid-column:auto;
+        display:flex;
+    }
+}
+</style>
 </head>
-
 
 <body>
 
 <div id="game">
 
-    <!-- =========================================
-         ÜST MENÜ
-    ========================================== -->
-
-    <header class="topbar">
-
-        <div class="logo">
-            ⚔️ Realm of Shadows
-        </div>
-
-
-        <div class="top-buttons">
-
-            <button
-                id="characterButton"
-                type="button"
-            >
-                🧙 Karakter
-            </button>
-
-
-            <button
-                id="inventoryButton"
-                type="button"
-            >
-                🎒 Envanter
-            </button>
-
-
-            <button
-                id="saveButton"
-                type="button"
-            >
-                💾 Kaydet
-            </button>
-
-
-            <button
-                id="loadButton"
-                type="button"
-            >
-                📂 Yükle
-            </button>
-
-        </div>
-
-    </header>
-
-
-    <!-- =========================================
-         ANA OYUN ALANI
-    ========================================== -->
-
-    <main class="game-layout">
-
-
-        <!-- =====================================
-             SOL PANEL
-        ====================================== -->
-
-        <aside class="left-panel">
-
-
-            <section class="character-card">
-
-                <div class="avatar">
-                    🧙
-                </div>
-
-
-                <h2 id="characterName">
-                    Arden
-                </h2>
-
-
-                <p id="characterClass">
-                    İnsan Savaşçı
-                </p>
-
-            </section>
-
-
-            <!-- TEMEL BİLGİLER -->
-
-            <section class="stats-card">
-
-                <h3>
-                    Karakter
-                </h3>
-
-
-                <div class="stat">
-
-                    <span>
-                        ❤️ Can
-                    </span>
-
-                    <strong id="hp">
-                        20 / 20
-                    </strong>
-
-                </div>
-
-
-                <div class="stat">
-
-                    <span>
-                        ⭐ Seviye
-                    </span>
-
-                    <strong id="level">
-                        1
-                    </strong>
-
-                </div>
-
-
-                <div class="stat">
-
-                    <span>
-                        ✨ XP
-                    </span>
-
-                    <strong id="xp">
-                        0
-                    </strong>
-
-                </div>
-
-
-                <div class="stat">
-
-                    <span>
-                        💰 Altın
-                    </span>
-
-                    <strong id="gold">
-                        25
-                    </strong>
-
-                </div>
-
-            </section>
-
-
-            <!-- ÖZELLİKLER -->
-
-            <section class="stats-card">
-
-                <h3>
-                    Özellikler
-                </h3>
-
-
-                <div class="ability">
-
-                    <span>
-                        ⚔️ Güç
-                    </span>
-
-                    <strong id="strength">
-                        16
-                    </strong>
-
-                </div>
-
-
-                <div class="ability">
-
-                    <span>
-                        🏹 Çeviklik
-                    </span>
-
-                    <strong id="dexterity">
-                        12
-                    </strong>
-
-                </div>
-
-
-                <div class="ability">
-
-                    <span>
-                        🛡️ Dayanıklılık
-                    </span>
-
-                    <strong id="constitution">
-                        15
-                    </strong>
-
-                </div>
-
-
-                <div class="ability">
-
-                    <span>
-                        🧠 Zeka
-                    </span>
-
-                    <strong id="intelligence">
-                        10
-                    </strong>
-
-                </div>
-
-
-                <div class="ability">
-
-                    <span>
-                        👁️ Bilgelik
-                    </span>
-
-                    <strong id="wisdom">
-                        11
-                    </strong>
-
-                </div>
-
-
-                <div class="ability">
-
-                    <span>
-                        🗣️ Karizma
-                    </span>
-
-                    <strong id="charisma">
-                        10
-                    </strong>
-
-                </div>
-
-            </section>
-
-        </aside>
-
-
-        <!-- =====================================
-             HİKAYE PANELİ
-        ====================================== -->
-
-        <section class="story-panel">
-
-
-            <!-- KONUM -->
-
-            <div class="location">
-
-                <div class="location-label">
-                    📍 Konum
-                </div>
-
-
-                <strong id="location">
-                    Blackmoor Köyü
-                </strong>
-
-            </div>
-
-
-            <!-- HİKAYE -->
-
-            <div
-                id="story"
-                class="story"
-            >
-
-                <!-- JavaScript hikayeyi buraya ekler -->
-
-            </div>
-
-
-            <!-- OYUNCU EYLEM ALANI -->
-
-            <div class="action-area">
-
-                <textarea
-                    id="playerInput"
-                    rows="3"
-                    placeholder="Karakterinin ne yaptığını yaz..."
-                ></textarea>
-
-
-                <button
-                    id="actionButton"
-                    class="action-button"
-                    type="button"
-                >
-                    ⚔️ Eylemi Gerçekleştir
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- =====================================
-             SAĞ PANEL
-        ====================================== -->
-
-        <aside class="right-panel">
-
-
-            <!-- =================================
-                 GÖREVLER
-            ================================== -->
-
-            <section class="side-card">
-
-                <div class="side-card-header">
-
-                    <h3>
-                        📜 Görevler
-                    </h3>
-
-
-                    <span
-                        id="questCount"
-                        class="item-count"
-                    >
-                        0
-                    </span>
-
-                </div>
-
-
-                <div
-                    id="quests"
-                    class="quest-list"
-                >
-
-                    <p class="empty">
-                        Görevler yükleniyor...
-                    </p>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================
-                 ZAR
-            ================================== -->
-
-            <section class="side-card dice-card">
-
-                <h3>
-                    🎲 Zar
-                </h3>
-
-
-                <div
-                    id="diceResult"
-                    class="dice-result"
-                >
-                    -
-                </div>
-
-
-                <button
-                    id="rollButton"
-                    class="dice-button"
-                    type="button"
-                >
-                    🎲 D20 At
-                </button>
-
-            </section>
-
-        </aside>
-
-    </main>
-
-</div>
-
-
-<!-- =========================================
-     KARAKTER MODALI
-========================================== -->
-
-<div
-    id="characterModal"
-    class="modal hidden"
->
-
-    <div class="modal-content">
-
-        <button
-            id="closeCharacter"
-            class="close"
-            type="button"
-            aria-label="Kapat"
-        >
-            ×
-        </button>
-
-
-        <h2>
-            🧙 Karakter
-        </h2>
-
-
-        <!-- KARAKTER BİLGİLERİ -->
-
-        <div
-            id="characterInfo"
-            class="character-info"
-        ></div>
-
-
-        <hr>
-
-
-        <!-- YENİ KARAKTER -->
-
-        <h3>
-            Yeni Karakter
-        </h3>
-
-
-        <label for="nameInput">
-            Karakter Adı
-        </label>
-
-
-        <input
-            id="nameInput"
-            type="text"
-            maxlength="30"
-            placeholder="Örn. Arden"
-        >
-
-
-        <label for="raceInput">
-            Irk
-        </label>
-
-
-        <select id="raceInput">
-
-            <option value="İnsan">
-                İnsan
-            </option>
-
-            <option value="Elf">
-                Elf
-            </option>
-
-            <option value="Cüce">
-                Cüce
-            </option>
-
-            <option value="Buçukluk">
-                Buçukluk
-            </option>
-
-            <option value="Yarı-Ork">
-                Yarı-Ork
-            </option>
-
-        </select>
-
-
-        <label for="classInput">
-            Sınıf
-        </label>
-
-
-        <select id="classInput">
-
-            <option value="Savaşçı">
-                Savaşçı
-            </option>
-
-            <option value="Büyücü">
-                Büyücü
-            </option>
-
-            <option value="Hırsız">
-                Hırsız
-            </option>
-
-            <option value="Paladin">
-                Paladin
-            </option>
-
-            <option value="Korucu">
-                Korucu
-            </option>
-
-        </select>
-
-
-        <label for="backgroundInput">
-            Geçmiş
-        </label>
-
-
-        <select id="backgroundInput">
-
-            <option value="Gezgin">
-                Gezgin
-            </option>
-
-            <option value="Asker">
-                Asker
-            </option>
-
-            <option value="Suçlu">
-                Suçlu
-            </option>
-
-            <option value="Bilgin">
-                Bilgin
-            </option>
-
-            <option value="Soylu">
-                Soylu
-            </option>
-
-        </select>
-
-
-        <button
-            id="createCharacter"
-            class="action-button"
-            type="button"
-        >
-            ⚔️ Karakteri Oluştur
-        </button>
-
+<header class="topbar">
+    <div class="logo">⚔️ Realm of Shadows</div>
+
+    <div class="top-buttons">
+        <button id="characterButton">🧙 Karakter</button>
+        <button id="inventoryButton">🎒 Envanter</button>
+        <button id="saveButton">💾 Kaydet</button>
+        <button id="loadButton">📂 Yükle</button>
     </div>
+</header>
+
+<main class="game-layout">
+
+<aside class="left-panel">
+
+<section class="character-card">
+    <div class="avatar">🧙</div>
+    <h2 id="characterName">Arden</h2>
+    <p id="characterClass">İnsan Savaşçı</p>
+</section>
+
+<section class="stats-card">
+<h3>Karakter</h3>
+
+<div class="stat"><span>❤️ Can</span><strong id="hp">20 / 20</strong></div>
+<div class="stat"><span>⭐ Seviye</span><strong id="level">1</strong></div>
+<div class="stat"><span>✨ XP</span><strong id="xp">0</strong></div>
+<div class="stat"><span>💰 Altın</span><strong id="gold">25</strong></div>
+</section>
+
+<section class="stats-card">
+<h3>Özellikler</h3>
+
+<div class="ability"><span>⚔️ Güç</span><strong id="strength">16</strong></div>
+<div class="ability"><span>🏹 Çeviklik</span><strong id="dexterity">12</strong></div>
+<div class="ability"><span>🛡️ Dayanıklılık</span><strong id="constitution">15</strong></div>
+<div class="ability"><span>🧠 Zeka</span><strong id="intelligence">10</strong></div>
+<div class="ability"><span>👁️ Bilgelik</span><strong id="wisdom">11</strong></div>
+<div class="ability"><span>🗣️ Karizma</span><strong id="charisma">10</strong></div>
+</section>
+
+</aside>
+
+<section class="story-panel">
+
+<div class="location">
+    <div class="location-label">📍 Konum</div>
+    <strong id="location">Blackmoor Köyü</strong>
+</div>
+
+<div id="story" class="story"></div>
+
+<div class="action-area">
+<textarea
+id="playerInput"
+rows="3"
+placeholder="Karakterinin ne yaptığını yaz... Örn: Kılıcımı çekip kurda saldırıyorum."
+></textarea>
+
+<button id="actionButton" class="action-button">
+⚔️ Eylemi Gerçekleştir
+</button>
+</div>
+
+</section>
+
+<aside class="right-panel">
+
+<section class="side-card">
+
+<div class="side-card-header">
+<h3>📜 Görevler</h3>
+<span id="questCount" class="item-count">0</span>
+</div>
+
+<div id="quests">
+<p class="empty">Görevler yükleniyor...</p>
+</div>
+
+</section>
+
+<section class="side-card dice-card">
+<h3>🎲 Zar</h3>
+<div id="diceResult" class="dice-result">-</div>
+<button id="rollButton" class="dice-button">🎲 D20 At</button>
+</section>
+
+</aside>
+
+</main>
+</div>
+
+<!-- KARAKTER MODALI -->
+
+<div id="characterModal" class="modal hidden">
+<div class="modal-content">
+
+<button id="closeCharacter" class="close">×</button>
+
+<h2>🧙 Karakter</h2>
+
+<div id="characterInfo" class="character-info"></div>
+
+<hr>
+
+<h3>Yeni Karakter</h3>
+
+<label for="nameInput">Karakter Adı</label>
+<input id="nameInput" maxlength="30" placeholder="Örn. Arden">
+
+<label for="raceInput">Irk</label>
+<select id="raceInput">
+<option>İnsan</option>
+<option>Elf</option>
+<option>Cüce</option>
+<option>Buçukluk</option>
+<option>Yarı-Ork</option>
+</select>
+
+<label for="classInput">Sınıf</label>
+<select id="classInput">
+<option>Savaşçı</option>
+<option>Büyücü</option>
+<option>Hırsız</option>
+<option>Paladin</option>
+<option>Korucu</option>
+</select>
+
+<label for="backgroundInput">Geçmiş</label>
+<select id="backgroundInput">
+<option>Gezgin</option>
+<option>Asker</option>
+<option>Suçlu</option>
+<option>Bilgin</option>
+<option>Soylu</option>
+</select>
+
+<button id="createCharacter" class="action-button">
+⚔️ Karakteri Oluştur
+</button>
+
+</div>
+</div>
+
+<!-- ENVANTER MODALI -->
+
+<div id="inventoryModal" class="modal hidden">
+<div class="modal-content">
+
+<button id="closeInventory" class="close">×</button>
+
+<div class="modal-title">
+<h2>🎒 Envanter</h2>
+<span id="inventoryCount" class="item-count">0</span>
+</div>
+
+<div id="inventory" class="inventory-list"></div>
+
+</div>
+</div>
+
+<script>
+
+/* =========================================================
+   REALM OF SHADOWS
+   TEK DOSYA SÜRÜMÜ
+========================================================= */
+
+const game = {
+
+player:{
+name:"Arden",
+race:"İnsan",
+className:"Savaşçı",
+background:"Gezgin",
+
+level:1,
+xp:0,
+
+hp:20,
+maxHp:20,
+
+stats:{
+strength:16,
+dexterity:12,
+constitution:15,
+intelligence:10,
+wisdom:11,
+charisma:10
+},
+
+inventory:[
+{
+id:"rusty_sword",
+name:"Paslı Kılıç",
+type:"weapon",
+damage:"1d8",
+quantity:1,
+equipped:false
+},
+{
+id:"potion",
+name:"Şifa İksiri",
+type:"consumable",
+quantity:2,
+heal:10
+},
+{
+id:"torch",
+name:"Meşale",
+type:"utility",
+quantity:3
+}
+],
+
+equippedWeapon:null,
+gold:25
+},
+
+world:{
+name:"Realm of Shadows",
+location:"Blackmoor Köyü",
+weather:"Yağmurlu",
+time:"Gece",
+danger:1,
+season:"Sonbahar",
+torchActive:false
+},
+
+npcs:[],
+quests:[],
+factions:[],
+locations:[],
+
+story:{
+chapter:1,
+scene:"Blackmoor Köyü",
+actions:[],
+events:[],
+flags:{},
+discoveredLocations:[],
+discoveredSecrets:[],
+relationships:{}
+},
+
+combat:{
+active:false,
+enemy:null,
+round:0
+},
+
+ai:{
+lastResponse:null,
+history:[]
+}
+
+};
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const $ = id => document.getElementById(id);
+
+const playerInput=$("playerInput");
+const actionButton=$("actionButton");
+const story=$("story");
+
+
+/* =========================================================
+   GÜVENLİ HTML
+========================================================= */
+
+function escapeHTML(text){
+
+const div=document.createElement("div");
+div.textContent=String(text);
+return div.innerHTML;
+
+}
+
+
+/* =========================================================
+   HİKAYE MESAJI
+========================================================= */
+
+function addStoryMessage(text,type="dm"){
+
+const message=document.createElement("div");
+message.className=`story-message ${type}`;
+
+const author=document.createElement("div");
+author.className="message-author";
+
+author.textContent=
+type==="player"
+?game.player.name
+:"🎲 Dungeon Master";
+
+const content=document.createElement("p");
+content.innerHTML=text;
+
+message.append(author,content);
+story.appendChild(message);
+
+story.scrollTop=story.scrollHeight;
+
+}
+
+
+/* =========================================================
+   ENVANTER
+========================================================= */
+
+function getInventoryItem(id){
+
+return game.player.inventory.find(
+item=>item.id===id
+);
+
+}
+
+
+function updateInventoryUI(){
+
+const panel=$("inventory");
+
+if(!panel)return;
+
+panel.innerHTML="";
+
+const inventory=game.player.inventory;
+
+$("inventoryCount").textContent=
+inventory.reduce(
+(total,item)=>total+(item.quantity||0),0
+);
+
+if(!inventory.length){
+
+panel.innerHTML=
+`<p class="empty">Envanter boş.</p>`;
+
+return;
+
+}
+
+inventory.forEach(item=>{
+
+let icon="📦";
+
+if(item.type==="weapon")icon="⚔️";
+if(item.type==="consumable")icon="🧪";
+if(item.type==="utility")icon="🔥";
+
+let action="Kullan";
+
+if(item.type==="weapon")
+action=item.equipped?"Bırak":"Kuşan";
+
+if(item.type==="utility")
+action=game.world.torchActive?"Söndür":"Yak";
+
+const element=document.createElement("div");
+
+element.className="inventory-item";
+
+element.innerHTML=`
+
+<div class="inventory-item-icon">${icon}</div>
+
+<div class="inventory-item-info">
+
+<strong>${escapeHTML(item.name)}</strong>
+
+<span>Adet: ${item.quantity}</span>
+
+${item.damage?
+`<span>Hasar: ${escapeHTML(item.damage)}</span>`:""}
+
+${item.equipped?
+`<span class="equipped">⚔️ Kuşanılmış</span>`:""}
 
 </div>
 
+<button
+class="inventory-use-button"
+data-id="${escapeHTML(item.id)}"
+>${action}</button>
+`;
 
-<!-- =========================================
-     ENVANTER MODALI
-========================================== -->
+element
+.querySelector(".inventory-use-button")
+.addEventListener("click",()=>{
+useInventoryItem(item.id)
+});
 
-<div
-    id="inventoryModal"
-    class="modal hidden"
->
+panel.appendChild(element);
 
-    <div class="modal-content inventory-modal">
+});
 
-        <button
-            id="closeInventory"
-            class="close"
-            type="button"
-            aria-label="Envanteri kapat"
-        >
-            ×
-        </button>
+}
 
 
-        <div class="modal-title">
+function useInventoryItem(id){
 
-            <h2>
-                🎒 Envanter
-            </h2>
+const item=getInventoryItem(id);
+
+if(!item)return;
+
+if(item.type==="weapon"){
+toggleWeapon(item);
+return;
+}
+
+if(item.type==="consumable"){
+usePotion(item);
+return;
+}
+
+if(item.type==="utility"){
+useTorch(item);
+}
+
+}
 
 
-            <span
-                id="inventoryCount"
-                class="item-count"
-            >
-                0
-            </span>
+function toggleWeapon(item){
 
-        </div>
+if(item.equipped){
+
+item.equipped=false;
+game.player.equippedWeapon=null;
+
+addStoryMessage(
+`⚔️ ${escapeHTML(item.name)} kuşandan çıkarıldı.`
+);
+
+}else{
+
+game.player.inventory.forEach(
+other=>{
+if(other.type==="weapon")
+other.equipped=false;
+}
+);
+
+item.equipped=true;
+game.player.equippedWeapon=item.id;
+
+addStoryMessage(
+`⚔️ <b>${escapeHTML(item.name)}</b> kuşandın.`
+);
+
+}
+
+updateInventoryUI();
+
+}
 
 
-        <div
-            id="inventory"
-            class="inventory-list"
-        >
+function usePotion(item){
 
-            <p class="empty">
-                Envanter yükleniyor...
-            </p>
+if(game.player.hp>=game.player.maxHp){
 
-        </div>
+addStoryMessage("❤️ Canın zaten tamamen dolu.");
+return;
 
-    </div>
+}
 
+const old=game.player.hp;
+
+game.player.hp=Math.min(
+game.player.maxHp,
+game.player.hp+(item.heal||10)
+);
+
+const healed=game.player.hp-old;
+
+item.quantity--;
+
+addStoryMessage(`
+🧪 Şifa İksiri kullandın.
+<br><br>
+❤️ <b>${healed}</b> can yenilendi.
+<br>
+Can: <b>${game.player.hp}/${game.player.maxHp}</b>
+`);
+
+removeEmptyItems();
+updateAllUI();
+
+}
+
+
+function useTorch(item){
+
+if(game.world.torchActive){
+
+game.world.torchActive=false;
+
+addStoryMessage("🔥 Meşaleyi söndürdün.");
+
+}else{
+
+if(item.quantity<=0){
+
+addStoryMessage("🔥 Kullanılabilir meşalen yok.");
+return;
+
+}
+
+item.quantity--;
+game.world.torchActive=true;
+
+addStoryMessage(`
+🔥 Meşaleyi yaktın.
+<br><br>
+Karanlık çevre artık daha görünür.
+`);
+
+removeEmptyItems();
+
+}
+
+updateInventoryUI();
+
+}
+
+
+function removeEmptyItems(){
+
+game.player.inventory=
+game.player.inventory.filter(
+item=>item.quantity>0
+);
+
+}
+
+
+/* =========================================================
+   KARAKTER
+========================================================= */
+
+function updateCharacterUI(){
+
+$("characterName").textContent=
+game.player.name;
+
+$("characterClass").textContent=
+`${game.player.race} ${game.player.className}`;
+
+$("hp").textContent=
+`${game.player.hp} / ${game.player.maxHp}`;
+
+$("level").textContent=game.player.level;
+$("xp").textContent=game.player.xp;
+$("gold").textContent=game.player.gold;
+
+for(const stat in game.player.stats){
+
+$(stat).textContent=
+game.player.stats[stat];
+
+}
+
+}
+
+
+function showCharacter(){
+
+$("characterInfo").innerHTML=`
+
+<p><strong>İsim:</strong> ${escapeHTML(game.player.name)}</p>
+<p><strong>Irk:</strong> ${escapeHTML(game.player.race)}</p>
+<p><strong>Sınıf:</strong> ${escapeHTML(game.player.className)}</p>
+<p><strong>Geçmiş:</strong> ${escapeHTML(game.player.background)}</p>
+
+<hr>
+
+<p><strong>Seviye:</strong> ${game.player.level}</p>
+<p><strong>XP:</strong> ${game.player.xp}</p>
+<p><strong>Can:</strong> ${game.player.hp}/${game.player.maxHp}</p>
+<p><strong>Altın:</strong> ${game.player.gold}</p>
+
+<p><strong>Silah:</strong>
+${
+game.player.equippedWeapon
+?escapeHTML(
+getInventoryItem(
+game.player.equippedWeapon
+)?.name||"Yok"
+)
+:"Yok"
+}
+</p>
+
+`;
+
+$("characterModal").classList.remove("hidden");
+
+}
+
+
+/* =========================================================
+   GÖREVLER
+========================================================= */
+
+function createQuest(data){
+
+if(game.quests.some(q=>q.id===data.id))
+return;
+
+game.quests.push({
+
+id:data.id,
+title:data.title,
+description:data.description,
+
+objectives:data.objectives.map(o=>({
+...o,
+completed:false
+})),
+
+reward:data.reward,
+status:"active"
+
+});
+
+}
+
+
+function initializeQuests(){
+
+createQuest({
+
+id:"blackmoor_whispers",
+
+title:"Blackmoor'un Fısıltıları",
+
+description:
+"Köy kuyusundan gelen gizemli seslerin kaynağını araştır.",
+
+objectives:[
+{id:"visit_well",text:"Köy kuyusunu araştır."},
+{id:"learn_secret",text:"Kuyunun sırrı hakkında bilgi edin."}
+],
+
+reward:100
+
+});
+
+
+createQuest({
+
+id:"missing_person",
+
+title:"Kayıp Köylü",
+
+description:
+"Blackmoor'da kaybolan kişinin izini araştır.",
+
+objectives:[
+{id:"talk_healer",text:"Mara ile konuş."},
+{id:"find_clue",text:"Kaybolan kişiye ait bir ipucu bul."}
+],
+
+reward:150
+
+});
+
+}
+
+
+function completeQuestObjective(questId,objectiveId){
+
+const quest=game.quests.find(q=>q.id===questId);
+
+if(!quest)return;
+
+const objective=
+quest.objectives.find(
+o=>o.id===objectiveId
+);
+
+if(!objective||objective.completed)return;
+
+objective.completed=true;
+
+if(
+quest.objectives.every(o=>o.completed)
+){
+
+quest.status="completed";
+
+game.player.gold+=quest.reward;
+
+addStoryMessage(`
+🎉 <b>Görev tamamlandı!</b>
+<br><br>
+${escapeHTML(quest.title)}
+<br>
+💰 ${quest.reward} altın kazandın.
+`);
+
+}
+
+updateQuestUI();
+updateCharacterUI();
+
+}
+
+
+function updateQuestUI(){
+
+const panel=$("quests");
+
+panel.innerHTML="";
+
+const active=
+game.quests.filter(
+q=>q.status==="active"
+);
+
+$("questCount").textContent=active.length;
+
+if(!active.length){
+
+panel.innerHTML=
+`<p class="empty">Aktif görev yok.</p>`;
+
+return;
+
+}
+
+active.forEach(quest=>{
+
+const completed=
+quest.objectives.filter(
+o=>o.completed
+).length;
+
+const element=document.createElement("div");
+
+element.className="quest-item";
+
+element.innerHTML=`
+
+<strong>📜 ${escapeHTML(quest.title)}</strong>
+
+<p>${escapeHTML(quest.description)}</p>
+
+<div>
+İlerleme:
+${completed}/${quest.objectives.length}
 </div>
 
+<ul>
 
-<!-- =========================================
-     JAVASCRIPT
-========================================== -->
+${quest.objectives.map(o=>`
 
-<script src="script.js"></script>
+<li>
+${o.completed?"✅":"⬜"}
+${escapeHTML(o.text)}
+</li>
+
+`).join("")}
+
+</ul>
+
+<small>Ödül: ${quest.reward} altın</small>
+`;
+
+panel.appendChild(element);
+
+});
+
+}
+
+
+/* =========================================================
+   NPC
+========================================================= */
+
+function initializeNPCs(){
+
+game.npcs=[
+
+{
+id:"elder_jonas",
+name:"Jonas",
+role:"Yaşlı Köylü",
+trust:0,
+location:"Blackmoor Köyü"
+},
+
+{
+id:"healer_mara",
+name:"Mara",
+role:"Şifacı",
+trust:5,
+location:"Blackmoor Köyü"
+},
+
+{
+id:"blacksmith_aldric",
+name:"Aldric",
+role:"Demirci",
+trust:0,
+location:"Blackmoor Köyü"
+}
+
+];
+
+}
+
+
+/* =========================================================
+   DÜŞMANLAR
+========================================================= */
+
+const enemies={
+
+shadow_wolf:{
+name:"Gölge Kurdu",
+hp:24,
+maxHp:24,
+armor:12,
+attackBonus:4,
+damage:"1d6",
+xp:50,
+gold:15,
+description:
+"Karanlığın içinden çıkan, gözleri sarı parlayan vahşi bir yaratık."
+},
+
+goblin:{
+name:"Goblin",
+hp:18,
+maxHp:18,
+armor:11,
+attackBonus:3,
+damage:"1d6",
+xp:40,
+gold:10,
+description:
+"Küçük ama sinsi bir orman goblini."
+},
+
+skeleton:{
+name:"İskelet Savaşçı",
+hp:30,
+maxHp:30,
+armor:13,
+attackBonus:5,
+damage:"1d8",
+xp:75,
+gold:20,
+description:
+"Eski mezarlardan yükselen kemiklerle kaplı bir savaşçı."
+}
+
+};
+
+
+/* =========================================================
+   ZAR
+========================================================= */
+
+function rollDice(notation){
+
+const match=String(notation).match(
+/^(\d+)d(\d+)$/
+);
+
+if(!match)return 0;
+
+let total=0;
+
+for(
+let i=0;
+i<Number(match[1]);
+i++
+){
+
+total+=
+Math.floor(
+Math.random()*Number(match[2])
+)+1;
+
+}
+
+return total;
+
+}
+
+
+function modifier(stat){
+
+return Math.floor((stat-10)/2);
+
+}
+
+
+/* =========================================================
+   SAVAŞ
+========================================================= */
+
+function startCombat(enemyId="shadow_wolf"){
+
+if(game.combat.active){
+
+addStoryMessage("⚔️ Zaten savaştasın.");
+return;
+
+}
+
+const template=enemies[enemyId];
+
+if(!template)return;
+
+game.combat.active=true;
+game.combat.round=1;
+
+game.combat.enemy={
+id:enemyId,
+...template
+};
+
+addStoryMessage(`
+
+⚔️ <b>SAVAŞ BAŞLADI!</b>
+
+<br><br>
+
+👹 <b>${escapeHTML(template.name)}</b>
+
+<br>
+
+${escapeHTML(template.description)}
+
+<br><br>
+
+❤️ Can:
+<b>${template.hp}/${template.maxHp}</b>
+
+<br>
+
+🛡️ Zırh:
+<b>${template.armor}</b>
+
+<br><br>
+
+<b>Saldırmak için "saldır" yaz.</b>
+
+<br>
+
+<b>İksir kullanmak için "iksir kullan" yaz.</b>
+
+<br>
+
+<b>Kaçmak için "kaç" yaz.</b>
+
+`);
+
+updateCombatUI();
+
+}
+
+
+function playerAttack(){
+
+const enemy=game.combat.enemy;
+
+const d20=
+Math.floor(Math.random()*20)+1;
+
+const strMod=
+modifier(game.player.stats.strength);
+
+const weapon=
+game.player.equippedWeapon
+?getInventoryItem(
+game.player.equippedWeapon
+)
+:null;
+
+const attack=d20+strMod;
+
+let damage=0;
+
+let text=`
+
+⚔️ <b>Saldırı!</b>
+
+<br>
+
+🎲 D20:
+<b>${d20}</b>
+
+<br>
+
+🎯 Toplam:
+<b>${attack}</b>
+
+<br>
+
+🛡️ Düşman zırhı:
+<b>${enemy.armor}</b>
+`;
+
+if(d20===20){
+
+damage=
+rollDice(
+weapon?.damage||"1d4"
+)*2;
+
+enemy.hp=Math.max(
+0,
+enemy.hp-damage
+);
+
+text+=`
+
+<br><br>
+🎉 <b>KRİTİK VURUŞ!</b>
+<br>
+💥 Hasar: <b>${damage}</b>
+`;
+
+}else if(d20!==1 && attack>=enemy.armor){
+
+damage=Math.max(
+1,
+rollDice(
+weapon?.damage||"1d4"
+)+strMod
+);
+
+enemy.hp=Math.max(
+0,
+enemy.hp-damage
+);
+
+text+=`
+
+<br><br>
+⚔️ <b>VURUŞ!</b>
+<br>
+💥 Hasar: <b>${damage}</b>
+`;
+
+}else{
+
+text+=`
+<br><br>
+❌ <b>Iskaladın!</b>
+`;
+
+}
+
+text+=`
+
+<br><br>
+
+👹 ${escapeHTML(enemy.name)}
+<br>
+❤️ ${enemy.hp}/${enemy.maxHp}
+`;
+
+addStoryMessage(text);
+
+if(enemy.hp<=0){
+
+winCombat();
+return;
+
+}
+
+enemyTurn();
+
+}
+
+
+function enemyTurn(){
+
+if(!game.combat.active)return;
+
+const enemy=game.combat.enemy;
+
+game.combat.round++;
+
+const d20=
+Math.floor(Math.random()*20)+1;
+
+const defense=
+10+
+modifier(game.player.stats.dexterity);
+
+const attack=
+d20+enemy.attackBonus;
+
+let damage=0;
+
+let text=`
+
+👹 <b>${escapeHTML(enemy.name)}</b>
+saldırıyor!
+
+<br><br>
+
+🎲 D20: <b>${d20}</b>
+
+<br>
+
+🎯 Saldırı: <b>${attack}</b>
+
+<br>
+
+🛡️ Savunman: <b>${defense}</b>
+`;
+
+if(d20===20){
+
+damage=rollDice(enemy.damage)*2;
+
+game.player.hp=Math.max(
+0,
+game.player.hp-damage
+);
+
+text+=`
+<br><br>
+💀 <b>KRİTİK VURUŞ!</b>
+<br>
+💥 Hasar: <b>${damage}</b>
+`;
+
+}else if(attack>=defense){
+
+damage=rollDice(enemy.damage);
+
+game.player.hp=Math.max(
+0,
+game.player.hp-damage
+);
+
+text+=`
+<br><br>
+🩸 <b>Vuruldun!</b>
+<br>
+💥 Hasar: <b>${damage}</b>
+`;
+
+}else{
+
+text+=`
+<br><br>
+❌ Düşman ıskaladı.
+`;
+
+}
+
+text+=`
+<br><br>
+❤️ Canın:
+<b>${game.player.hp}/${game.player.maxHp}</b>
+`;
+
+addStoryMessage(text);
+
+updateAllUI();
+
+if(game.player.hp<=0)
+loseCombat();
+
+}
+
+
+function attemptFlee(){
+
+const roll=
+Math.floor(Math.random()*20)+1;
+
+const dex=modifier(
+game.player.stats.dexterity
+);
+
+if(roll+dex>=12){
+
+addStoryMessage(`
+🏃 <b>Kaçmayı başardın!</b>
+<br><br>
+🎲 D20: ${roll}
+`);
+
+game.combat.active=false;
+game.combat.enemy=null;
+game.combat.round=0;
+
+updateAllUI();
+
+}else{
+
+addStoryMessage(`
+❌ Kaçamadın!
+<br><br>
+🎲 D20: ${roll}
+`);
+
+enemyTurn();
+
+}
+
+}
+
+
+function winCombat(){
+
+const enemy=game.combat.enemy;
+
+game.player.xp+=enemy.xp;
+game.player.gold+=enemy.gold;
+
+addStoryMessage(`
+🎉 <b>ZAFER!</b>
+
+<br><br>
+
+👹 ${escapeHTML(enemy.name)} yenildi.
+
+<br><br>
+
+✨ XP:
+<b>+${enemy.xp}</b>
+
+<br>
+
+💰 Altın:
+<b>+${enemy.gold}</b>
+`);
+
+game.combat.active=false;
+game.combat.enemy=null;
+game.combat.round=0;
+
+checkLevelUp();
+updateAllUI();
+
+}
+
+
+function loseCombat(){
+
+const name=
+game.combat.enemy?.name||"Düşman";
+
+game.combat.active=false;
+game.combat.enemy=null;
+game.combat.round=0;
+
+game.player.hp=
+Math.ceil(game.player.maxHp*.5);
+
+game.world.location="Blackmoor Köyü";
+
+addStoryMessage(`
+💀 <b>YERE YIĞILDIN!</b>
+
+<br><br>
+
+${escapeHTML(name)} seni yendi.
+
+<br><br>
+
+Neyse ki ölüm son değil.
+
+<br><br>
+
+Blackmoor Köyü'nde gözlerini yeniden açıyorsun.
+
+`);
+
+updateAllUI();
+
+}
+
+
+/* =========================================================
+   SAVAŞ KOMUTU
+========================================================= */
+
+function handleCombatAction(action){
+
+const lower=action.toLowerCase();
+
+if(
+lower.includes("iksir")||
+lower.includes("şifa")
+){
+
+const potion=getInventoryItem("potion");
+
+if(potion)
+usePotion(potion);
+else
+addStoryMessage("🧪 Şifa iksirin yok.");
+
+if(game.combat.active)
+enemyTurn();
+
+return;
+
+}
+
+if(
+lower.includes("kaç")||
+lower.includes("geri çek")
+){
+
+attemptFlee();
+return;
+
+}
+
+if(
+lower.includes("saldır")||
+lower.includes("vur")||
+lower.includes("kılıç")||
+lower.includes("bıçak")||
+lower.includes("büyü")
+){
+
+playerAttack();
+return;
+
+}
+
+addStoryMessage(`
+
+⚔️ Savaş devam ediyor.
+
+<br><br>
+
+Ne yapmak istiyorsun?
+
+<br>
+
+<b>"saldır"</b> — Düşmana saldır.
+
+<br>
+
+<b>"iksir kullan"</b> — Şifa iksiri kullan.
+
+<br>
+
+<b>"kaç"</b> — Kaçmayı dene.
+
+`);
+
+}
+
+
+/* =========================================================
+   DOĞAL DİL MOTORU
+========================================================= */
+
+function naturalLanguageAction(action){
+
+const lower=action.toLowerCase();
+
+const words={
+attack:[
+"saldır",
+"vur",
+"kes",
+"öldür",
+"kılıcımı çek",
+"üzerine koş"
+],
+
+explore:[
+"araştır",
+"incele",
+"kontrol et",
+"bak",
+"keşfet",
+"etrafa bak"
+],
+
+talk:[
+"konuş",
+"sor",
+"seslen",
+"ile konuş"
+],
+
+well:[
+"kuyu",
+"kuyunun",
+"kuyuya",
+"kuyuyu"
+],
+
+church:[
+"kilise",
+"kiliseye",
+"kiliseyi"
+],
+
+forest:[
+"orman",
+"ormana",
+"ağaç",
+"ağaçların"
+],
+
+torch:[
+"meşale",
+"ışık yak",
+"meşaleyi yak"
+],
+
+potion:[
+"iksir",
+"şifa iç",
+"iksir iç"
+]
+
+};
+
+
+/* savaş */
+
+if(
+words.attack.some(x=>lower.includes(x))
+){
+
+startCombat("shadow_wolf");
+return;
+
+}
+
+
+/* iksir */
+
+if(
+words.potion.some(x=>lower.includes(x))
+){
+
+const potion=getInventoryItem("potion");
+
+if(potion)
+usePotion(potion);
+else
+addStoryMessage("🧪 Şifa iksirin yok.");
+
+return;
+
+}
+
+
+/* meşale */
+
+if(
+words.torch.some(x=>lower.includes(x))
+){
+
+const torch=getInventoryItem("torch");
+
+if(torch)
+useTorch(torch);
+else
+addStoryMessage("🔥 Meşalen yok.");
+
+return;
+
+}
+
+
+/* kuyu */
+
+if(
+words.well.some(x=>lower.includes(x))
+){
+
+game.story.flags.well=true;
+
+completeQuestObjective(
+"blackmoor_whispers",
+"visit_well"
+);
+
+addStoryMessage(`
+
+🌑 Kuyunun taş kenarına yaklaşıyorsun.
+
+<br><br>
+
+Yağmur taşların üzerinden süzülüyor.
+
+<br><br>
+
+Kuyunun dibinden çok hafif bir fısıltı geliyor.
+
+<br><br>
+
+<i>"Beni bul..."</i>
+
+<br><br>
+
+Bir şeyin aşağıda hareket ettiğini hissediyorsun.
+
+`);
+
+return;
+
+}
+
+
+/* kilise */
+
+if(
+words.church.some(x=>lower.includes(x))
+){
+
+game.story.flags.church=true;
+
+addStoryMessage(`
+
+⛪ Terk edilmiş kiliseye ulaşıyorsun.
+
+<br><br>
+
+Kapı hafifçe açık.
+
+<br><br>
+
+İçeriden zayıf bir mum ışığı geliyor.
+
+<br><br>
+
+Kapının arkasından bir ayak sesi duyuluyor.
+
+`);
+
+return;
+
+}
+
+
+/* orman */
+
+if(
+words.forest.some(x=>lower.includes(x))
+){
+
+game.world.location="Blackmoor Ormanı";
+
+if(
+!game.story.discoveredLocations.includes(
+"Blackmoor Ormanı"
+)
+)
+game.story.discoveredLocations.push(
+"Blackmoor Ormanı"
+);
+
+addStoryMessage(`
+
+🌲 Blackmoor Ormanı'na giriyorsun.
+
+<br><br>
+
+Köyün ışıkları arkanda kalıyor.
+
+<br><br>
+
+Ağaçların arasından sarı iki göz beliriyor.
+
+<br><br>
+
+👹 <b>Gölge Kurdu!</b>
+
+`);
+
+startCombat("shadow_wolf");
+
+return;
+
+}
+
+
+/* konuşma */
+
+if(
+words.talk.some(x=>lower.includes(x))
+){
+
+if(
+lower.includes("mara")||
+lower.includes("şifacı")
+){
+
+completeQuestObjective(
+"missing_person",
+"talk_healer"
+);
+
+addStoryMessage(`
+
+🧑‍⚕️ Mara sana dikkatlice bakıyor.
+
+<br><br>
+
+<i>
+"Kardeşim birkaç gün önce kayboldu.
+Onu en son kilisenin yakınında gördüler."
+</i>
+
+<br><br>
+
+Gözlerinde korku var.
+
+`);
+
+return;
+
+}
+
+addStoryMessage(`
+
+🧑 Bir köylü sana bakıyor.
+
+<br><br>
+
+<i>
+"Bu gece burada fazla dolaşma..."
+</i>
+
+`);
+
+return;
+
+}
+
+
+/* keşif */
+
+if(
+words.explore.some(x=>lower.includes(x))
+){
+
+addStoryMessage(`
+
+🔎 Çevreyi dikkatlice araştırıyorsun.
+
+<br><br>
+
+Yağmur, taşların üzerinde ayak izlerini
+silmeye başlamış.
+
+<br><br>
+
+Fakat çamurun içinde sana ait olmayan
+bir çift ayak izi fark ediyorsun.
+
+`);
+
+game.story.flags.foundFootprint=true;
+
+completeQuestObjective(
+"missing_person",
+"find_clue"
+);
+
+return;
+
+}
+
+
+/* varsayılan */
+
+const responses=[
+
+`Etrafı dikkatlice gözlemliyorsun. Karanlıkta henüz fark etmediğin bir şey olduğunu hissediyorsun.`,
+
+`Hamlen çevrede küçük bir değişikliğe neden oluyor. Uzaklardan metalik bir ses duyuluyor.`,
+
+`Bir süre sessizlik oluyor. Sonra yağmurun arasından belirsiz bir fısıltı duyuyorsun.`,
+
+`İçgüdülerin burada daha derin bir sırrın olduğunu söylüyor.`
+
+];
+
+addStoryMessage(
+responses[
+Math.floor(Math.random()*responses.length)
+]
+);
+
+}
+
+
+/* =========================================================
+   ANA EYLEM
+========================================================= */
+
+function playerAction(){
+
+const text=playerInput.value.trim();
+
+if(!text)return;
+
+addStoryMessage(
+escapeHTML(text),
+"player"
+);
+
+game.story.actions.push({
+text,
+location:game.world.location,
+time:game.world.time,
+timestamp:new Date().toISOString()
+});
+
+playerInput.value="";
+
+if(game.combat.active){
+
+handleCombatAction(text);
+return;
+
+}
+
+/*
+Doğal dil motoru burada çalışıyor.
+Artık yalnızca tek kelimelik komutlara bağlı değil.
+*/
+
+naturalLanguageAction(text);
+
+}
+
+
+/* =========================================================
+   ZAR
+========================================================= */
+
+function rollD20(){
+
+const result=
+Math.floor(Math.random()*20)+1;
+
+$("diceResult").textContent=result;
+
+if(result===20){
+
+addStoryMessage(
+"🎉 <b>Kritik başarı!</b> D20 sonucu 20."
+);
+
+}else if(result===1){
+
+addStoryMessage(
+"💀 <b>Kritik başarısızlık!</b> D20 sonucu 1."
+);
+
+}else{
+
+addStoryMessage(
+`🎲 D20 sonucu: <b>${result}</b>`
+);
+
+}
+
+}
+
+
+/* =========================================================
+   SEVİYE
+========================================================= */
+
+function checkLevelUp(){
+
+while(
+game.player.xp>=
+game.player.level*100
+){
+
+const required=
+game.player.level*100;
+
+game.player.xp-=required;
+game.player.level++;
+
+game.player.maxHp+=5;
+game.player.hp=
+game.player.maxHp;
+
+addStoryMessage(`
+
+🌟 <b>SEVİYE ATLADIN!</b>
+
+<br><br>
+
+⭐ Yeni seviye:
+<b>${game.player.level}</b>
+
+<br><br>
+
+❤️ Maksimum canın arttı.
+
+`);
+
+}
+
+}
+
+
+/* =========================================================
+   KARAKTER OLUŞTURMA
+========================================================= */
+
+const classStats={
+
+"Savaşçı":{
+strength:16,dexterity:12,constitution:15,
+intelligence:10,wisdom:11,charisma:10,
+maxHp:24
+},
+
+"Büyücü":{
+strength:8,dexterity:12,constitution:10,
+intelligence:18,wisdom:15,charisma:10,
+maxHp:16
+},
+
+"Hırsız":{
+strength:11,dexterity:18,constitution:12,
+intelligence:13,wisdom:10,charisma:14,
+maxHp:18
+},
+
+"Paladin":{
+strength:16,dexterity:10,constitution:16,
+intelligence:10,wisdom:13,charisma:16,
+maxHp:23
+},
+
+"Korucu":{
+strength:13,dexterity:17,constitution:13,
+intelligence:11,wisdom:14,charisma:10,
+maxHp:20
+}
+
+};
+
+
+const raceBonuses={
+
+"İnsan":{
+strength:1,dexterity:1,constitution:1,
+intelligence:1,wisdom:1,charisma:1
+},
+
+"Elf":{
+dexterity:2,intelligence:2,wisdom:1
+},
+
+"Cüce":{
+constitution:3,strength:1
+},
+
+"Buçukluk":{
+dexterity:3,charisma:1
+},
+
+"Yarı-Ork":{
+strength:3,constitution:2,charisma:-1
+}
+
+};
+
+
+function createCharacter(){
+
+const name=$("nameInput").value.trim();
+
+if(!name){
+
+alert("Önce karakterine bir isim vermelisin.");
+return;
+
+}
+
+const race=$("raceInput").value;
+const className=$("classInput").value;
+const background=$("backgroundInput").value;
+
+const base=classStats[className];
+const bonus=raceBonuses[race];
+
+game.player.name=name;
+game.player.race=race;
+game.player.className=className;
+game.player.background=background;
+
+game.player.level=1;
+game.player.xp=0;
+
+game.player.stats={
+
+strength:
+base.strength+(bonus.strength||0),
+
+dexterity:
+base.dexterity+(bonus.dexterity||0),
+
+constitution:
+base.constitution+(bonus.constitution||0),
+
+intelligence:
+base.intelligence+(bonus.intelligence||0),
+
+wisdom:
+base.wisdom+(bonus.wisdom||0),
+
+charisma:
+base.charisma+(bonus.charisma||0)
+
+};
+
+game.player.maxHp=base.maxHp;
+game.player.hp=base.maxHp;
+
+game.player.equippedWeapon=null;
+
+game.player.inventory.forEach(
+item=>{
+if(item.type==="weapon")
+item.equipped=false;
+}
+);
+
+$("characterModal").classList.add("hidden");
+
+addStoryMessage(`
+
+⚔️ <b>Yeni karakter oluşturuldu!</b>
+
+<br><br>
+
+<b>${escapeHTML(name)}</b>,
+Realm of Shadows dünyasına adım atıyor.
+
+<br><br>
+
+Irk:
+<b>${escapeHTML(race)}</b>
+
+<br>
+
+Sınıf:
+<b>${escapeHTML(className)}</b>
+
+<br>
+
+Geçmiş:
+<b>${escapeHTML(background)}</b>
+
+`);
+
+updateAllUI();
+
+}
+
+
+/* =========================================================
+   KAYDET
+========================================================= */
+
+function saveGame(){
+
+localStorage.setItem(
+"realmOfShadowsSave",
+JSON.stringify(game)
+);
+
+addStoryMessage(
+"💾 Oyun başarıyla kaydedildi."
+);
+
+}
+
+
+/* =========================================================
+   YÜKLE
+========================================================= */
+
+function loadGame(){
+
+const saved=
+localStorage.getItem(
+"realmOfShadowsSave"
+);
+
+if(!saved){
+
+addStoryMessage(
+"📂 Kaydedilmiş oyun bulunamadı."
+);
+
+return;
+
+}
+
+try{
+
+const data=JSON.parse(saved);
+
+Object.assign(game.player,data.player);
+Object.assign(game.world,data.world);
+Object.assign(game.story,data.story);
+
+game.npcs=data.npcs||[];
+game.quests=data.quests||[];
+game.factions=data.factions||[];
+game.locations=data.locations||[];
+
+game.combat=data.combat||{
+active:false,
+enemy:null,
+round:0
+};
+
+game.ai=data.ai||{
+lastResponse:null,
+history:[]
+};
+
+updateAllUI();
+
+addStoryMessage(
+"📂 Kaydedilmiş macera geri yüklendi."
+);
+
+}catch(error){
+
+console.error(error);
+
+addStoryMessage(
+"❌ Kayıt dosyası okunamadı."
+);
+
+}
+
+}
+
+
+/* =========================================================
+   SAVAŞ UI
+========================================================= */
+
+function updateCombatUI(){
+
+let status=$("combatStatus");
+
+if(!game.combat.active){
+
+if(status)status.remove();
+
+return;
+
+}
+
+if(!status){
+
+status=document.createElement("div");
+
+status.id="combatStatus";
+status.className="combat-status";
+
+story.parentNode.insertBefore(
+status,
+story.nextSibling
+);
+
+}
+
+const enemy=game.combat.enemy;
+
+status.innerHTML=`
+
+<div class="combat-status-title">
+⚔️ SAVAŞ
+</div>
+
+<div>
+👹 <strong>${escapeHTML(enemy.name)}</strong>
+</div>
+
+<div>
+❤️ ${enemy.hp}/${enemy.maxHp}
+</div>
+
+<div>
+🔄 Tur: ${game.combat.round}
+</div>
+`;
+
+}
+
+
+/* =========================================================
+   UI
+========================================================= */
+
+function updateAllUI(){
+
+$("location").textContent=
+game.world.location;
+
+updateCharacterUI();
+updateInventoryUI();
+updateQuestUI();
+updateCombatUI();
+
+}
+
+
+/* =========================================================
+   MODALLAR
+========================================================= */
+
+$("characterButton").onclick=
+showCharacter;
+
+$("closeCharacter").onclick=()=>{
+$("characterModal").classList.add("hidden");
+};
+
+$("inventoryButton").onclick=()=>{
+updateInventoryUI();
+$("inventoryModal").classList.remove("hidden");
+};
+
+$("closeInventory").onclick=()=>{
+$("inventoryModal").classList.add("hidden");
+};
+
+$("characterModal").onclick=e=>{
+if(e.target===$("characterModal"))
+$("characterModal").classList.add("hidden");
+};
+
+$("inventoryModal").onclick=e=>{
+if(e.target===$("inventoryModal"))
+$("inventoryModal").classList.add("hidden");
+};
+
+document.addEventListener("keydown",e=>{
+
+if(e.key==="Escape"){
+
+$("characterModal").classList.add("hidden");
+$("inventoryModal").classList.add("hidden");
+
+}
+
+});
+
+
+/* =========================================================
+   EVENTLER
+========================================================= */
+
+actionButton.onclick=playerAction;
+
+playerInput.addEventListener(
+"keydown",
+e=>{
+
+if(
+e.key==="Enter"&&
+!e.shiftKey
+){
+
+e.preventDefault();
+playerAction();
+
+}
+
+}
+);
+
+$("saveButton").onclick=saveGame;
+$("loadButton").onclick=loadGame;
+$("rollButton").onclick=rollD20;
+$("createCharacter").onclick=createCharacter;
+
+
+/* =========================================================
+   BAŞLANGIÇ
+========================================================= */
+
+initializeNPCs();
+initializeQuests();
+
+addStoryMessage(`
+
+Yağmur, Blackmoor Köyü'nün taş sokaklarını dövüyor.
+
+<br><br>
+
+Köy meydanının ortasında eski bir kuyu duruyor.
+
+<br><br>
+
+Terk edilmiş kilisenin kapısı ise rüzgâr olmamasına rağmen
+yavaşça hareket ediyor.
+
+<br><br>
+
+Gece daha yeni başlıyor.
+
+<br><br>
+
+<b>Karakterinin ne yapacağını yazabilirsin.</b>
+
+<br><br>
+
+Örneğin:
+<br>
+• "Kuyuyu araştırıyorum."
+<br>
+• "Mara ile konuşuyorum."
+<br>
+• "Ormana gidiyorum."
+<br>
+• "Meşaleyi yakıyorum."
+<br>
+• "Kılıcımı çekip saldırıyorum."
+
+`);
+
+updateAllUI();
+
+console.log(
+"✅ Realm of Shadows tek dosya sistemi hazır."
+);
+
+</script>
 
 </body>
-
 </html>
