@@ -1257,8 +1257,440 @@ if (characterModal) {
                 characterModal.classList.add("hidden");
 
             }
+           
 
         }
     );
 
 }
+/* =========================================================
+   KARAKTER OLUŞTURMA SİSTEMİ
+========================================================= */
+
+const nameInput =
+    document.getElementById("nameInput");
+
+const raceInput =
+    document.getElementById("raceInput");
+
+const classInput =
+    document.getElementById("classInput");
+
+const backgroundInput =
+    document.getElementById("backgroundInput");
+
+const createCharacterButton =
+    document.getElementById("createCharacter");
+
+
+/* =========================================================
+   SINIF ÖZELLİKLERİ
+========================================================= */
+
+const classStats = {
+
+    "Savaşçı": {
+        strength: 16,
+        dexterity: 12,
+        constitution: 15,
+        intelligence: 10,
+        wisdom: 11,
+        charisma: 10,
+        maxHp: 24
+    },
+
+    "Büyücü": {
+        strength: 8,
+        dexterity: 12,
+        constitution: 10,
+        intelligence: 18,
+        wisdom: 15,
+        charisma: 10,
+        maxHp: 16
+    },
+
+    "Hırsız": {
+        strength: 11,
+        dexterity: 18,
+        constitution: 12,
+        intelligence: 13,
+        wisdom: 10,
+        charisma: 14,
+        maxHp: 18
+    },
+
+    "Paladin": {
+        strength: 16,
+        dexterity: 10,
+        constitution: 16,
+        intelligence: 10,
+        wisdom: 13,
+        charisma: 16,
+        maxHp: 23
+    },
+
+    "Korucu": {
+        strength: 13,
+        dexterity: 17,
+        constitution: 13,
+        intelligence: 11,
+        wisdom: 14,
+        charisma: 10,
+        maxHp: 20
+    }
+
+};
+
+
+/* =========================================================
+   IRK BONUSLARI
+========================================================= */
+
+const raceBonuses = {
+
+    "İnsan": {
+        strength: 1,
+        dexterity: 1,
+        constitution: 1,
+        intelligence: 1,
+        wisdom: 1,
+        charisma: 1
+    },
+
+    "Elf": {
+        dexterity: 2,
+        intelligence: 2,
+        wisdom: 1
+    },
+
+    "Cüce": {
+        constitution: 3,
+        strength: 1
+    },
+
+    "Buçukluk": {
+        dexterity: 3,
+        charisma: 1
+    },
+
+    "Yarı-Ork": {
+        strength: 3,
+        constitution: 2,
+        charisma: -1
+    }
+
+};
+
+
+/* =========================================================
+   KARAKTERİ OLUŞTUR
+========================================================= */
+
+function createCharacter() {
+
+    const name =
+        nameInput.value.trim();
+
+    const race =
+        raceInput.value;
+
+    const className =
+        classInput.value;
+
+    const background =
+        backgroundInput.value;
+
+
+    /* İsim kontrolü */
+
+    if (!name) {
+
+        alert(
+            "Önce karakterine bir isim vermelisin."
+        );
+
+        nameInput.focus();
+
+        return;
+
+    }
+
+
+    /* Sınıf özelliklerini al */
+
+    const baseStats =
+        classStats[className];
+
+
+    /* Irk bonuslarını al */
+
+    const bonuses =
+        raceBonuses[race];
+
+
+    /* Özellikleri oluştur */
+
+    const newStats = {
+
+        strength:
+            baseStats.strength +
+            (bonuses.strength || 0),
+
+        dexterity:
+            baseStats.dexterity +
+            (bonuses.dexterity || 0),
+
+        constitution:
+            baseStats.constitution +
+            (bonuses.constitution || 0),
+
+        intelligence:
+            baseStats.intelligence +
+            (bonuses.intelligence || 0),
+
+        wisdom:
+            baseStats.wisdom +
+            (bonuses.wisdom || 0),
+
+        charisma:
+            baseStats.charisma +
+            (bonuses.charisma || 0)
+
+    };
+
+
+    /* Oyuncuyu güncelle */
+
+    game.player.name =
+        name;
+
+    game.player.race =
+        race;
+
+    game.player.className =
+        className;
+
+    game.player.background =
+        background;
+
+    game.player.level =
+        1;
+
+    game.player.xp =
+        0;
+
+    game.player.stats =
+        newStats;
+
+    game.player.maxHp =
+        baseStats.maxHp;
+
+    game.player.hp =
+        baseStats.maxHp;
+
+
+    /* Karakter panelini güncelle */
+
+    updateCharacterUI();
+
+
+    /* Karakter penceresini kapat */
+
+    characterModal.classList.add(
+        "hidden"
+    );
+
+
+    /* Oyuncuya bilgi ver */
+
+    addStoryMessage(
+
+        `
+        <b>⚔️ Karakter oluşturuldu.</b>
+
+        <br><br>
+
+        <b>${escapeHTML(name)}</b>,
+        artık Realm of Shadows dünyasına
+        adım atıyor.
+
+        <br><br>
+
+        Irk:
+        <b>${escapeHTML(race)}</b>
+
+        <br>
+
+        Sınıf:
+        <b>${escapeHTML(className)}</b>
+
+        <br>
+
+        Geçmiş:
+        <b>${escapeHTML(background)}</b>
+
+        <br><br>
+
+        Bundan sonra vereceğin kararlar
+        bu karakterin hikâyesini şekillendirecek.
+
+        `,
+
+        "dm"
+
+    );
+
+
+    console.log(
+        "Yeni karakter:",
+        game.player
+    );
+
+}
+
+
+/* =========================================================
+   KARAKTER ARAYÜZÜ
+========================================================= */
+
+function updateCharacterUI() {
+
+    const nameElement =
+        document.getElementById(
+            "characterName"
+        );
+
+    const classElement =
+        document.getElementById(
+            "characterClass"
+        );
+
+    const hpElement =
+        document.getElementById("hp");
+
+    const levelElement =
+        document.getElementById("level");
+
+    const xpElement =
+        document.getElementById("xp");
+
+    const goldElement =
+        document.getElementById("gold");
+
+
+    if (nameElement) {
+
+        nameElement.textContent =
+            game.player.name;
+
+    }
+
+
+    if (classElement) {
+
+        classElement.textContent =
+            `${game.player.race} ${game.player.className}`;
+
+    }
+
+
+    if (hpElement) {
+
+        hpElement.textContent =
+            `${game.player.hp} / ${game.player.maxHp}`;
+
+    }
+
+
+    if (levelElement) {
+
+        levelElement.textContent =
+            game.player.level;
+
+    }
+
+
+    if (xpElement) {
+
+        xpElement.textContent =
+            game.player.xp;
+
+    }
+
+
+    if (goldElement) {
+
+        goldElement.textContent =
+            game.player.gold;
+
+    }
+
+
+    updateStat(
+        "strength",
+        game.player.stats.strength
+    );
+
+    updateStat(
+        "dexterity",
+        game.player.stats.dexterity
+    );
+
+    updateStat(
+        "constitution",
+        game.player.stats.constitution
+    );
+
+    updateStat(
+        "intelligence",
+        game.player.stats.intelligence
+    );
+
+    updateStat(
+        "wisdom",
+        game.player.stats.wisdom
+    );
+
+    updateStat(
+        "charisma",
+        game.player.stats.charisma
+    );
+
+}
+
+
+/* =========================================================
+   TEK STAT GÜNCELLE
+========================================================= */
+
+function updateStat(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+
+        element.textContent =
+            value;
+
+    }
+
+}
+
+
+/* =========================================================
+   KARAKTER OLUŞTUR BUTONU
+========================================================= */
+
+if (createCharacterButton) {
+
+    createCharacterButton.addEventListener(
+        "click",
+        createCharacter
+    );
+
+}
+
