@@ -1693,4 +1693,27 @@ if (createCharacterButton) {
     );
 
 }
+console.log("SCRIPT ÇALIŞIYOR");
+
+const testCharacterButton =
+    document.getElementById("characterButton");
+
+const testCharacterModal =
+    document.getElementById("characterModal");
+
+console.log("Karakter butonu:", testCharacterButton);
+console.log("Karakter modalı:", testCharacterModal);
+
+if (testCharacterButton && testCharacterModal) {
+
+    testCharacterButton.addEventListener("click", function () {
+
+        console.log("KARAKTER BUTONUNA BASILDI");
+
+        testCharacterModal.classList.remove("hidden");
+
+    });
+
+}
+
 
