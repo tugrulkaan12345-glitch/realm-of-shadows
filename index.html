@@ -1,26 +1,433 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
+<!DOCTYPE html> <html lang="tr"> <head>
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <title>Realm of Shadows</title>
+<title>Realm of Shadows</title>
 
-    <link rel="stylesheet" href="style.css">
-</head>
+<link rel="stylesheet" href="style.css">
 
-<body>
+</head> <body>
+<div id="game">
 
-    <h1>Realm of Shadows</h1>
+    <!-- ÜST MENÜ -->
 
-    <p>D&D maceran burada başlayacak.</p>
+    <header class="topbar">
 
-    <script src="script.js"></script>
+        <div class="logo">
+            ⚔️ Realm of Shadows
+        </div>
 
-</body>
-</html>
+        <div class="top-buttons">
 
+            <button id="characterButton">
+                Karakter
+            </button>
+
+            <button id="inventoryButton">
+                Envanter
+            </button>
+
+            <button id="saveButton">
+                Kaydet
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- ANA OYUN ALANI -->
+
+    <main class="game-layout">
+
+
+        <!-- SOL PANEL -->
+
+        <aside class="left-panel">
+
+            <section class="character-card">
+
+                <div class="avatar">
+                    🧙
+                </div>
+
+                <h2 id="characterName">
+                    İsimsiz Kahraman
+                </h2>
+
+                <p id="characterClass">
+                    Sınıf seçilmedi
+                </p>
+
+            </section>
+
+
+            <section class="stats-card">
+
+                <h3>
+                    Karakter
+                </h3>
+
+                <div class="stat">
+                    <span>❤️ Can</span>
+                    <strong id="hp">
+                        20 / 20
+                    </strong>
+                </div>
+
+                <div class="stat">
+                    <span>⭐ Seviye</span>
+                    <strong id="level">
+                        1
+                    </strong>
+                </div>
+
+                <div class="stat">
+                    <span>✨ XP</span>
+                    <strong id="xp">
+                        0
+                    </strong>
+                </div>
+
+                <div class="stat">
+                    <span>💰 Altın</span>
+                    <strong id="gold">
+                        0
+                    </strong>
+                </div>
+
+            </section>
+
+
+            <section class="stats-card">
+
+                <h3>
+                    Özellikler
+                </h3>
+
+                <div class="ability">
+                    <span>Güç</span>
+                    <strong id="strength">
+                        10
+                    </strong>
+                </div>
+
+                <div class="ability">
+                    <span>Çeviklik</span>
+                    <strong id="dexterity">
+                        10
+                    </strong>
+                </div>
+
+                <div class="ability">
+                    <span>Dayanıklılık</span>
+                    <strong id="constitution">
+                        10
+                    </strong>
+                </div>
+
+                <div class="ability">
+                    <span>Zeka</span>
+                    <strong id="intelligence">
+                        10
+                    </strong>
+                </div>
+
+                <div class="ability">
+                    <span>Bilgelik</span>
+                    <strong id="wisdom">
+                        10
+                    </strong>
+                </div>
+
+                <div class="ability">
+                    <span>Karizma</span>
+                    <strong id="charisma">
+                        10
+                    </strong>
+                </div>
+
+            </section>
+
+        </aside>
+
+
+
+        <!-- ORTA PANEL -->
+
+        <section class="story-panel">
+
+            <div class="location">
+
+                <span>
+                    📍 Konum
+                </span>
+
+                <strong id="location">
+                    Bilinmeyen Topraklar
+                </strong>
+
+            </div>
+
+
+            <div
+                id="story"
+                class="story"
+            >
+
+                <div class="story-message dm">
+
+                    <div class="message-author">
+                        🎲 Dungeon Master
+                    </div>
+
+                    <p>
+                        Dünya seni bekliyor.
+                    </p>
+
+                    <p>
+                        Henüz hiçbir şey belirlenmedi.
+                        Vereceğin ilk karar,
+                        bu maceranın başlangıcı olacak.
+                    </p>
+
+                    <p>
+                        <strong>
+                            Ne yapmak istiyorsun?
+                        </strong>
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- OYUNCU EYLEM ALANI -->
+
+            <div class="action-area">
+
+                <textarea
+                    id="playerInput"
+                    placeholder="Karakterinin ne yaptığını kendi cümlelerinle yaz..."
+                ></textarea>
+
+                <button
+                    id="actionButton"
+                    class="action-button"
+                >
+                    Eylemi Gerçekleştir
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- SAĞ PANEL -->
+
+        <aside class="right-panel">
+
+
+            <section class="side-card">
+
+                <h3>
+                    🎒 Envanter
+                </h3>
+
+                <div id="inventory">
+
+                    <p class="empty">
+                        Envanter boş.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <section class="side-card">
+
+                <h3>
+                    📜 Görevler
+                </h3>
+
+                <div id="quests">
+
+                    <p class="empty">
+                        Henüz görev yok.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <section class="side-card dice-card">
+
+                <h3>
+                    🎲 Zar
+                </h3>
+
+                <div
+                    id="diceResult"
+                    class="dice-result"
+                >
+                    -
+                </div>
+
+                <button
+                    id="rollButton"
+                    class="dice-button"
+                >
+                    D20 At
+                </button>
+
+            </section>
+
+
+        </aside>
+
+    </main>
+
+</div>
+
+
+<!-- KARAKTER PENCERESİ -->
+
+<div
+    id="characterModal"
+    class="modal hidden"
+>
+
+    <div class="modal-content">
+
+        <button
+            class="close"
+            id="closeCharacter"
+        >
+            ×
+        </button>
+
+        <h2>
+            🧙 Karakterini Oluştur
+        </h2>
+
+
+        <label>
+            Karakter adı
+        </label>
+
+        <input
+            id="nameInput"
+            type="text"
+            placeholder="Örn. Ardan"
+        >
+
+
+        <label>
+            Irk
+        </label>
+
+        <select id="raceInput">
+
+            <option value="İnsan">
+                İnsan
+            </option>
+
+            <option value="Elf">
+                Elf
+            </option>
+
+            <option value="Cüce">
+                Cüce
+            </option>
+
+            <option value="Buçukluk">
+                Buçukluk
+            </option>
+
+            <option value="Yarı-Ork">
+                Yarı-Ork
+            </option>
+
+        </select>
+
+
+        <label>
+            Sınıf
+        </label>
+
+        <select id="classInput">
+
+            <option value="Savaşçı">
+                Savaşçı
+            </option>
+
+            <option value="Büyücü">
+                Büyücü
+            </option>
+
+            <option value="Hırsız">
+                Hırsız
+            </option>
+
+            <option value="Paladin">
+                Paladin
+            </option>
+
+            <option value="Korucu">
+                Korucu
+            </option>
+
+        </select>
+
+
+        <label>
+            Geçmiş
+        </label>
+
+        <select id="backgroundInput">
+
+            <option value="Gezgin">
+                Gezgin
+            </option>
+
+            <option value="Asker">
+                Asker
+            </option>
+
+            <option value="Suçlu">
+                Suçlu
+            </option>
+
+            <option value="Bilgin">
+                Bilgin
+            </option>
+
+            <option value="Soylu">
+                Soylu
+            </option>
+
+        </select>
+
+
+        <button
+            id="createCharacter"
+            class="action-button"
+        >
+            Karakteri Oluştur
+        </button>
+
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body> </html>
