@@ -4001,3 +4001,426 @@ console.log(
 console.log(
     "🤖 AI Dungeon Master altyapısı hazır."
 );
+/* =========================================================
+   REALM OF SHADOWS
+   AI DUNGEON MASTER - RENDER BAĞLANTISI
+========================================================= */
+
+/*
+   BURAYA KENDİ RENDER ADRESİNİ YAZ.
+
+   ÖRNEK:
+
+   https://realm-of-shadows-xxxx.onrender.com
+
+   Sonuna /api/story ekliyoruz.
+*/
+
+const AI_SERVER_URL =
+    "https://realm-of-shadows-xxxx.onrender.com/api/story";
+
+
+
+
+/* =========================================================
+   AI DUNGEON MASTER
+========================================================= */
+
+async function askAIDungeonMaster(playerAction) {
+
+    try {
+
+        console.log(
+            "🤖 AI isteği gönderiliyor:",
+            playerAction
+        );
+
+
+        const gameState = {
+
+            player: {
+
+                name:
+                    game.player.name,
+
+                race:
+                    game.player.race,
+
+                className:
+                    game.player.className,
+
+                background:
+                    game.player.background,
+
+                level:
+                    game.player.level,
+
+                xp:
+                    game.player.xp,
+
+                hp:
+                    game.player.hp,
+
+                maxHp:
+                    game.player.maxHp,
+
+                stats:
+                    game.player.stats,
+
+                inventory:
+                    game.player.inventory,
+
+                equippedWeapon:
+                    game.player.equippedWeapon,
+
+                gold:
+                    game.player.gold
+
+            },
+
+
+            world: {
+
+                name:
+                    game.world.name,
+
+                location:
+                    game.world.location,
+
+                weather:
+                    game.world.weather,
+
+                time:
+                    game.world.time,
+
+                danger:
+                    game.world.danger,
+
+                season:
+                    game.world.season,
+
+                torchActive:
+                    game.world.torchActive
+
+            },
+
+
+            story: {
+
+                chapter:
+                    game.story.chapter,
+
+                scene:
+                    game.story.scene,
+
+                actions:
+                    game.story.actions.slice(-10),
+
+                events:
+                    game.story.events.slice(-10),
+
+                flags:
+                    game.story.flags,
+
+                discoveredLocations:
+                    game.story.discoveredLocations,
+
+                discoveredSecrets:
+                    game.story.discoveredSecrets,
+
+                relationships:
+                    game.story.relationships
+
+            },
+
+
+            npcs:
+                game.npcs,
+
+            quests:
+                game.quests,
+
+            combat:
+                game.combat
+
+        };
+
+
+        const response =
+            await fetch(
+                AI_SERVER_URL,
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            playerAction:
+                                playerAction,
+
+                            gameState:
+                                gameState
+
+                        })
+
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "AI sunucusu HTTP " +
+                response.status
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !data ||
+            !data.response
+        ) {
+
+            throw new Error(
+                "AI sunucusundan cevap alınamadı."
+            );
+
+        }
+
+
+        /* =========================
+           AI GEÇMİŞİ
+        ========================= */
+
+        if (!game.ai) {
+
+            game.ai = {
+
+                lastResponse:
+                    null,
+
+                history:
+                    [],
+
+                pendingCheck:
+                    null
+
+            };
+
+        }
+
+
+        game.ai.lastResponse =
+            data.response;
+
+
+        game.ai.history.push({
+
+            playerAction:
+                playerAction,
+
+            response:
+                data.response,
+
+            timestamp:
+                new Date().toISOString()
+
+        });
+
+
+        /* =========================
+           AI CEVABINI OYUNA YAZ
+        ========================= */
+
+        addStoryMessage(
+            data.response,
+            "dm"
+        );
+
+
+        /* =========================
+           HİKAYE GEÇMİŞİ
+        ========================= */
+
+        game.story.events.push({
+
+            type:
+                "ai_response",
+
+            action:
+                playerAction,
+
+            response:
+                data.response,
+
+            location:
+                game.world.location,
+
+            timestamp:
+                new Date().toISOString()
+
+        });
+
+
+        updateAllUI();
+
+
+        console.log(
+            "✅ AI cevabı alındı."
+        );
+
+
+        return data.response;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "❌ AI bağlantı hatası:",
+            error
+        );
+
+
+        addStoryMessage(
+
+            `
+            ⚠️ <b>Dungeon Master'a bağlanılamadı.</b>
+
+            <br><br>
+
+            Oyun yerel sistem üzerinden devam ediyor.
+            `,
+
+            "dm"
+
+        );
+
+
+        return null;
+
+    }
+
+}
+
+
+/* =========================================================
+   AI TEST FONKSİYONU
+========================================================= */
+
+async function testAIConnection() {
+
+    console.log(
+        "🤖 AI bağlantısı test ediliyor..."
+    );
+
+
+    const response =
+        await askAIDungeonMaster(
+            "Oyuncu çevresini dikkatlice araştırıyor."
+        );
+
+
+    if (response) {
+
+        console.log(
+            "✅ AI bağlantısı başarıyla çalışıyor."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DUNGEON MASTER'I AI'A BAĞLA
+========================================================= */
+
+const localDungeonMaster =
+    dungeonMaster;
+
+
+dungeonMaster =
+    async function(action) {
+
+        /*
+         * SAVAŞTA AI KULLANMIYORUZ.
+         *
+         * Saldırı, iksir ve kaçma mevcut
+         * savaş sistemimiz tarafından yönetiliyor.
+         */
+
+        if (game.combat.active) {
+
+            handleCombatAction(
+                action
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Normal oyun eylemlerini AI'a gönder.
+         */
+
+        const aiResponse =
+            await askAIDungeonMaster(
+                action
+            );
+
+
+        /*
+         * AI çalışmazsa eski Dungeon Master
+         * sistemine geri dön.
+         */
+
+        if (!aiResponse) {
+
+            localDungeonMaster(
+                action
+            );
+
+        }
+
+    };
+
+
+/* =========================================================
+   HAZIR
+========================================================= */
+
+console.log(
+    "========================================"
+);
+
+console.log(
+    "🤖 AI DUNGEON MASTER HAZIR"
+);
+
+console.log(
+    "🎲 Realm of Shadows"
+);
+
+console.log(
+    "🌐 Render API:",
+    AI_SERVER_URL
+);
+
+console.log(
+    "========================================"
+);
