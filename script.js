@@ -1113,3 +1113,152 @@ function startGame() {
 initializeWorld();
 
 startGame();
+/* =========================================================
+   KARAKTER PANELİ
+========================================================= */
+
+const characterButton =
+    document.getElementById("characterButton");
+
+const characterModal =
+    document.getElementById("characterModal");
+
+const closeCharacter =
+    document.getElementById("closeCharacter");
+
+const characterInfo =
+    document.getElementById("characterInfo");
+
+
+function showCharacter() {
+
+    if (!characterInfo) {
+        return;
+    }
+
+    characterInfo.innerHTML = `
+
+        <p>
+            <strong>İsim:</strong>
+            ${game.player.name}
+        </p>
+
+        <p>
+            <strong>Irk:</strong>
+            ${game.player.race}
+        </p>
+
+        <p>
+            <strong>Sınıf:</strong>
+            ${game.player.className}
+        </p>
+
+        <p>
+            <strong>Geçmiş:</strong>
+            ${game.player.background}
+        </p>
+
+        <p>
+            <strong>Seviye:</strong>
+            ${game.player.level}
+        </p>
+
+        <p>
+            <strong>XP:</strong>
+            ${game.player.xp}
+        </p>
+
+        <hr>
+
+        <p>
+            <strong>Can:</strong>
+            ${game.player.hp} / ${game.player.maxHp}
+        </p>
+
+        <hr>
+
+        <p>
+            <strong>Güç:</strong>
+            ${game.player.stats.strength}
+        </p>
+
+        <p>
+            <strong>Çeviklik:</strong>
+            ${game.player.stats.dexterity}
+        </p>
+
+        <p>
+            <strong>Anayasa:</strong>
+            ${game.player.stats.constitution}
+        </p>
+
+        <p>
+            <strong>Zeka:</strong>
+            ${game.player.stats.intelligence}
+        </p>
+
+        <p>
+            <strong>Bilgelik:</strong>
+            ${game.player.stats.wisdom}
+        </p>
+
+        <p>
+            <strong>Karizma:</strong>
+            ${game.player.stats.charisma}
+        </p>
+
+        <hr>
+
+        <p>
+            <strong>Altın:</strong>
+            ${game.player.gold}
+        </p>
+
+    `;
+
+
+    characterModal.classList.remove("hidden");
+
+}
+
+
+if (characterButton) {
+
+    characterButton.addEventListener(
+        "click",
+        showCharacter
+    );
+
+}
+
+
+if (closeCharacter) {
+
+    closeCharacter.addEventListener(
+        "click",
+        function() {
+
+            characterModal.classList.add("hidden");
+
+        }
+    );
+
+}
+
+
+if (characterModal) {
+
+    characterModal.addEventListener(
+        "click",
+        function(event) {
+
+            if (event.target === characterModal) {
+
+                characterModal.classList.add("hidden");
+
+            }
+
+        }
+    );
+
+}
