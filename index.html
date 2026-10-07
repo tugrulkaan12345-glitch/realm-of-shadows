@@ -1,21 +1,29 @@
-<!DOCTYPE html> <html lang="tr"> <head>
-<meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="tr">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+<head>
 
-<title>Realm of Shadows</title>
+    <meta charset="UTF-8">
 
-<link rel="stylesheet" href="style.css">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Realm of Shadows</title>
+
     <link rel="stylesheet" href="style.css">
 
+</head>
 
-</head> <body>
+
+<body>
+
 <div id="game">
 
-    <!-- ÜST MENÜ -->
+    <!-- =========================
+         ÜST MENÜ
+    ========================== -->
 
     <header class="topbar">
 
@@ -23,52 +31,39 @@
             ⚔️ Realm of Shadows
         </div>
 
-       <div class="top-buttons">
+        <div class="top-buttons">
 
-    <button id="characterButton">
-        Karakter
-    </button>
-           <div id="characterModal" class="modal hidden">
+            <button id="characterButton">
+                Karakter
+            </button>
 
-    <div class="modal-content">
+            <button id="inventoryButton">
+                Envanter
+            </button>
 
-        <button class="close" id="closeCharacter">
-            ×
-        </button>
+            <button id="saveButton">
+                Kaydet
+            </button>
 
-        <h2>Karakter</h2>
+            <button id="loadButton">
+                Yükle
+            </button>
 
-        <div id="characterInfo"></div>
-
-    </div>
-
-</div>
-
-
-    <button id="inventoryButton">
-        Envanter
-    </button>
-
-    <button id="saveButton">
-        Kaydet
-    </button>
-
-    <button id="loadButton">
-        Yükle
-    </button>
-
-</div>
-
+        </div>
 
     </header>
 
 
-    <!-- ANA OYUN ALANI -->
+    <!-- =========================
+         ANA OYUN
+    ========================== -->
 
     <main class="game-layout">
 
 
-        <!-- SOL PANEL -->
+        <!-- =====================
+             SOL PANEL
+        ====================== -->
 
         <aside class="left-panel">
 
@@ -79,11 +74,11 @@
                 </div>
 
                 <h2 id="characterName">
-                    İsimsiz Kahraman
+                    Arden
                 </h2>
 
                 <p id="characterClass">
-                    Sınıf seçilmedi
+                    Savaşçı
                 </p>
 
             </section>
@@ -96,31 +91,54 @@
                 </h3>
 
                 <div class="stat">
-                    <span>❤️ Can</span>
+
+                    <span>
+                        ❤️ Can
+                    </span>
+
                     <strong id="hp">
                         20 / 20
                     </strong>
+
                 </div>
 
+
                 <div class="stat">
-                    <span>⭐ Seviye</span>
+
+                    <span>
+                        ⭐ Seviye
+                    </span>
+
                     <strong id="level">
                         1
                     </strong>
+
                 </div>
 
+
                 <div class="stat">
-                    <span>✨ XP</span>
+
+                    <span>
+                        ✨ XP
+                    </span>
+
                     <strong id="xp">
                         0
                     </strong>
+
                 </div>
 
+
                 <div class="stat">
-                    <span>💰 Altın</span>
+
+                    <span>
+                        💰 Altın
+                    </span>
+
                     <strong id="gold">
-                        0
+                        25
                     </strong>
+
                 </div>
 
             </section>
@@ -132,46 +150,82 @@
                     Özellikler
                 </h3>
 
+
                 <div class="ability">
-                    <span>Güç</span>
+
+                    <span>
+                        Güç
+                    </span>
+
                     <strong id="strength">
-                        10
+                        16
                     </strong>
+
                 </div>
 
+
                 <div class="ability">
-                    <span>Çeviklik</span>
+
+                    <span>
+                        Çeviklik
+                    </span>
+
                     <strong id="dexterity">
-                        10
+                        12
                     </strong>
+
                 </div>
 
+
                 <div class="ability">
-                    <span>Dayanıklılık</span>
+
+                    <span>
+                        Dayanıklılık
+                    </span>
+
                     <strong id="constitution">
-                        10
+                        15
                     </strong>
+
                 </div>
 
+
                 <div class="ability">
-                    <span>Zeka</span>
+
+                    <span>
+                        Zeka
+                    </span>
+
                     <strong id="intelligence">
                         10
                     </strong>
+
                 </div>
 
+
                 <div class="ability">
-                    <span>Bilgelik</span>
+
+                    <span>
+                        Bilgelik
+                    </span>
+
                     <strong id="wisdom">
-                        10
+                        11
                     </strong>
+
                 </div>
 
+
                 <div class="ability">
-                    <span>Karizma</span>
+
+                    <span>
+                        Karizma
+                    </span>
+
                     <strong id="charisma">
                         10
                     </strong>
+
                 </div>
 
             </section>
@@ -179,8 +233,9 @@
         </aside>
 
 
-
-        <!-- ORTA PANEL -->
+        <!-- =====================
+             HİKAYE
+        ====================== -->
 
         <section class="story-panel">
 
@@ -191,7 +246,7 @@
                 </span>
 
                 <strong id="location">
-                    Bilinmeyen Topraklar
+                    Blackmoor Köyü
                 </strong>
 
             </div>
@@ -202,34 +257,14 @@
                 class="story"
             >
 
-                <div class="story-message dm">
-
-                    <div class="message-author">
-                        🎲 Dungeon Master
-                    </div>
-
-                    <p>
-                        Dünya seni bekliyor.
-                    </p>
-
-                    <p>
-                        Henüz hiçbir şey belirlenmedi.
-                        Vereceğin ilk karar,
-                        bu maceranın başlangıcı olacak.
-                    </p>
-
-                    <p>
-                        <strong>
-                            Ne yapmak istiyorsun?
-                        </strong>
-                    </p>
-
-                </div>
+                <!-- JavaScript buraya hikaye ekleyecek -->
 
             </div>
 
 
-            <!-- OYUNCU EYLEM ALANI -->
+            <!-- =================
+                 OYUNCU EYLEMİ
+            ================== -->
 
             <div class="action-area">
 
@@ -238,9 +273,11 @@
                     placeholder="Karakterinin ne yaptığını kendi cümlelerinle yaz..."
                 ></textarea>
 
+
                 <button
                     id="actionButton"
                     class="action-button"
+                    type="button"
                 >
                     Eylemi Gerçekleştir
                 </button>
@@ -250,8 +287,9 @@
         </section>
 
 
-
-        <!-- SAĞ PANEL -->
+        <!-- =====================
+             SAĞ PANEL
+        ====================== -->
 
         <aside class="right-panel">
 
@@ -265,7 +303,7 @@
                 <div id="inventory">
 
                     <p class="empty">
-                        Envanter boş.
+                        Envanter yükleniyor...
                     </p>
 
                 </div>
@@ -282,7 +320,7 @@
                 <div id="quests">
 
                     <p class="empty">
-                        Henüz görev yok.
+                        Görevler yükleniyor...
                     </p>
 
                 </div>
@@ -303,15 +341,16 @@
                     -
                 </div>
 
+
                 <button
                     id="rollButton"
                     class="dice-button"
+                    type="button"
                 >
                     D20 At
                 </button>
 
             </section>
-
 
         </aside>
 
@@ -320,7 +359,9 @@
 </div>
 
 
-<!-- KARAKTER PENCERESİ -->
+<!-- =========================
+     KARAKTER MODALI
+========================== -->
 
 <div
     id="characterModal"
@@ -332,27 +373,29 @@
         <button
             class="close"
             id="closeCharacter"
+            type="button"
         >
             ×
         </button>
+
 
         <h2>
             🧙 Karakterini Oluştur
         </h2>
 
 
-        <label>
+        <label for="nameInput">
             Karakter adı
         </label>
 
         <input
             id="nameInput"
             type="text"
-            placeholder="Örn. Ardan"
+            placeholder="Örn. Arden"
         >
 
 
-        <label>
+        <label for="raceInput">
             Irk
         </label>
 
@@ -381,7 +424,7 @@
         </select>
 
 
-        <label>
+        <label for="classInput">
             Sınıf
         </label>
 
@@ -410,7 +453,7 @@
         </select>
 
 
-        <label>
+        <label for="backgroundInput">
             Geçmiş
         </label>
 
@@ -442,6 +485,7 @@
         <button
             id="createCharacter"
             class="action-button"
+            type="button"
         >
             Karakteri Oluştur
         </button>
@@ -453,4 +497,6 @@
 
 <script src="script.js"></script>
 
-</body> </html>
+</body>
+
+</html>
