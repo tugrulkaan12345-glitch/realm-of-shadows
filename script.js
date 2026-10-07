@@ -1314,16 +1314,58 @@ function newGame() {
 
 }
 
-startGame();
+
 /* =========================================================
-   KAYDET / YÜKLE BUTONLARI
+   OYUNCU EYLEM BUTONU
+========================================================= */
+
+const actionButton =
+    document.querySelector(".action-button");
+
+
+if (actionButton) {
+
+    actionButton.addEventListener(
+        "click",
+        playerAction
+    );
+
+}
+
+
+/* =========================================================
+   ENTER TUŞU
+========================================================= */
+
+if (playerInput) {
+
+    playerInput.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key === "Enter" &&
+                !event.shiftKey
+            ) {
+
+                event.preventDefault();
+
+                playerAction();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   KAYDET
 ========================================================= */
 
 const saveButton =
     document.getElementById("saveButton");
-
-const loadButton =
-    document.getElementById("loadButton");
 
 
 if (saveButton) {
@@ -1334,6 +1376,14 @@ if (saveButton) {
     );
 
 }
+
+
+/* =========================================================
+   YÜKLE
+========================================================= */
+
+const loadButton =
+    document.getElementById("loadButton");
 
 
 if (loadButton) {
@@ -1347,7 +1397,7 @@ if (loadButton) {
 
 
 /* =========================================================
-   BAŞLAT
+   OYUNU BAŞLAT
 ========================================================= */
 
 startGame();
